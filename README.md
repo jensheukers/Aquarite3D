@@ -26,11 +26,13 @@ important to specify these files in a structured order. This order should always
     4. Models
 
 Aquarite3D requires some information about a meta file to access its contents, these are specified as the following:
-    ```#META
+    ```
+    #META
     resourceName=YOUR_RESOURCE_NAME
     offset=OFFSET_FROM_BUILD_DIRECTORY
     author=YOUR_NAME
-    version=VERSION_HERE```
+    version=VERSION_HERE
+    ```
 
 a example Meta file can be found in game/res/example.meta
 
