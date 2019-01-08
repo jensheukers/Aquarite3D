@@ -19,11 +19,13 @@ A meta file can be loaded into the framework using the method:
 To create a meta files a few things should be kept in mind, most importantly is the order of calling, Aquarite3D reads
 Meta files from top to bottom. Since a material might require a texture and a model might require a material it is 
 important to specify these files in a structured order. This order should always be:
-    0. Meta (Information about asset)
-    1. Textures
-    2. Meshes
-    3. Materials
-    4. Models
+```
+0. Meta (Information about asset)
+1. Textures
+2. Meshes
+3. Materials
+4. Models
+```
 
 Aquarite3D requires some information about a meta file to access its contents, these are specified as the following:
 ```
