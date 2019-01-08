@@ -1,0 +1,32 @@
+#HEADER
+name=EXAMPLE_SCENE
+
+#ENTITY
+model=Cube
+position=0.0f,0.0f,-5.0f
+rotation=0.0f,0.0f,0.0f
+scale=1.0f,1.0f,1.0f
+
+#ENTITY
+model=Teapot
+position=0.0f,2.0f,-5.0f
+rotation=0.0f,0.0f,0.0f
+scale=0.5f,0.5f,0.5f
+
+#ENTITY
+model=Plane
+position=0.0f,-1.0f,0.0f
+rotation=0.0f,0.0f,0.0f
+scale=10.0f,1.0f,10.0f
+
+#LIGHT
+position=5.0f,2.0f, -5.0f
+ambient=0.0f,0.0f,0.2f
+diffuse=0.0f,0.0f,0.5f
+specular=0.0f,0.0f,1.0f
+
+#LIGHT
+position=0.0f,2.0f, 0.0f
+ambient=0.2f,0.0f,0.0f
+diffuse=0.5f,0.0f,0.0f
+specular=1.0f,0.0f,0.0f

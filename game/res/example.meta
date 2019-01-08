@@ -1,0 +1,19 @@
+#META
+resourceName=Example
+offset=res/example/
+author=Jens Heukers
+version=0.1f
+
+#TEXTURES
+BrickWall=textures/brickwall.tga
+
+#MESHES
+Cube=meshes/cube.obj
+Teapot=meshes/teapot.obj
+Plane=meshes/plane.obj
+
+#MATERIALS
+Materials=materials/material.amat
+
+#MODELS
+Models=models/model.amod

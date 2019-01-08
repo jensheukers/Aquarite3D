@@ -1,0 +1,14 @@
+#MODEL
+name=Cube
+mesh=Cube
+material=defaultMaterialTex
+
+#MODEL
+name=Teapot
+mesh=Teapot
+material=defaultMaterial
+
+#MODEL
+name=Plane
+mesh=Plane
+material=defaultMaterial
