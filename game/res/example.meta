@@ -1,4 +1,9 @@
 //Example Meta File
+//Order of calling for meta files should always be:
+// 1. Textures
+// 2. Meshes
+// 3. Materials
+// 4. Models
 #META
 resourceName=Example
 offset=res/example/

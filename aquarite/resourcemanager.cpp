@@ -3,7 +3,7 @@
 *
 *	Description: Source file for ResourceManager singleton class.
 *
-*	Version: 28/12/2018
+*	Version: 8/1/2019
 *
 *	© 2018, Jens Heukers
 */
