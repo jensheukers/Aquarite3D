@@ -110,6 +110,7 @@ void ResourceManager::LoadMeta(std::string offset) {
 
 		while (std::getline(metaFile, metaLine)) {
 			if (metaLine == "") continue;
+			if (metaLine.at(0) == '/' && metaLine.at(1) == '/') continue; //Comment
 
 			if (metaLine == "#META") {
 				currentMeta = new Meta();
