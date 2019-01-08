@@ -85,7 +85,8 @@ specular=0.5f,0.5f,0.5f
 If you dont want to use a diffuseMap or any other property you can just remove the entire property, also Texture Name should be the variable name you defined in the .meta file
 
 <b> Temporary Notice </b></br>
-Currently shaders are not supported in meta files, they will be in the near future and shaders can then be loaded by the ResourceManager, also more properties like normal maps are to be added.
+Currently shaders are not supported in meta files, they will be in the near future and shaders can then be loaded by the ResourceManager, for now you can use the ```_aquariteDefaultShader``` shader that is loaded by default. 
+Also more properties like normal maps are to be added.
 
 ## License
 
