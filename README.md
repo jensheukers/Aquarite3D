@@ -36,7 +36,7 @@ author=YOUR_NAME
 version=VERSION_HERE
 ```
 
-You can add comments to a meta file using two slashes i.e ```// I am a comment```. </br>
+You can add comments to a meta file using two slashes at the beginning of the <b>line</b> i.e ```// I am a comment```. </br>
 A example Meta file can be found in game/res/example.meta
 
 ## License
