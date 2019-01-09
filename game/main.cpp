@@ -50,6 +50,10 @@ int main(int argc, char* argv[]) {
 		if (Input::GetKey(KEYCODE_D)) {
 			camera->Move(CameraDirection::Right, Core::GetDeltaTime() * 5);
 		}
+
+		if (Input::GetKeyDown(KEYCODE_ESCAPE)) {
+			Core::SetCursorEnabled(true);
+		}
 	}
 	 // Destroy Core Instance
 	Core::GetInstance()->Destroy();

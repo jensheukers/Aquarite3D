@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 21/12/2018
+*	Version: 9/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -136,6 +136,9 @@ float Core::CalculateDeltaTime() {
 }
 
 void Core::Destroy() {
+
+	//Delete res manager
+	delete ResourceManager::GetInstance();
 
 	//Delete renderer
 	if (Core::GetInstance()->renderer) {

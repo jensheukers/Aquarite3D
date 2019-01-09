@@ -3,7 +3,7 @@
 *
 *	Description: Source file for ResourceManager singleton class.
 *
-*	Version: 8/1/2019
+*	Version: 9/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -46,6 +46,17 @@ Texture* ResourceManager::GetTexture(std::string key) {
 	return ResourceManager::GetInstance()->_textures[key];
 }
 
+void ResourceManager::RemoveTexture(std::string key) {
+	if (ResourceManager::GetInstance()->_textures[key] == nullptr) return;
+	delete ResourceManager::GetTexture(key);
+	
+	ResourceManager::GetInstance()->_textures[key] = nullptr;
+
+	std::string _convertedString = "Removed Texture resource: ";
+	_convertedString.append(key);
+	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
+}
+
 void ResourceManager::AddMesh(std::string key, Mesh* mesh) {
 	ResourceManager::GetInstance()->_meshes[key] = mesh;
 
@@ -56,6 +67,17 @@ void ResourceManager::AddMesh(std::string key, Mesh* mesh) {
 
 Mesh* ResourceManager::GetMesh(std::string key) {
 	return ResourceManager::GetInstance()->_meshes[key];
+}
+
+void ResourceManager::RemoveMesh(std::string key) {
+	if (ResourceManager::GetInstance()->_meshes[key] == nullptr) return;
+	delete ResourceManager::GetMesh(key);
+
+	ResourceManager::GetInstance()->_meshes[key] = nullptr;
+
+	std::string _convertedString = "Removed Mesh resource: ";
+	_convertedString.append(key);
+	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
 }
 
 void ResourceManager::AddShader(std::string key, Shader* shader) {
@@ -70,6 +92,17 @@ Shader* ResourceManager::GetShader(std::string key) {
 	return ResourceManager::GetInstance()->_shaders[key];
 }
 
+void ResourceManager::RemoveShader(std::string key) {
+	if (ResourceManager::GetInstance()->_shaders[key] == nullptr) return;
+	delete ResourceManager::GetShader(key);
+
+	ResourceManager::GetInstance()->_shaders[key] = nullptr;
+
+	std::string _convertedString = "Removed Shader resource: ";
+	_convertedString.append(key);
+	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
+}
+
 void ResourceManager::AddMaterial(std::string key, Material* material) {
 	ResourceManager::GetInstance()->_materials[key] = material;
 
@@ -82,6 +115,17 @@ Material* ResourceManager::GetMaterial(std::string key) {
 	return ResourceManager::GetInstance()->_materials[key];
 }
 
+void ResourceManager::RemoveMaterial(std::string key) {
+	if (ResourceManager::GetInstance()->_materials[key] == nullptr) return;
+	delete ResourceManager::GetMaterial(key);
+
+	ResourceManager::GetInstance()->_materials[key] = nullptr;
+
+	std::string _convertedString = "Removed Material resource: ";
+	_convertedString.append(key);
+	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
+}
+
 void ResourceManager::AddModel(std::string key, Model* material) {
 	ResourceManager::GetInstance()->_models[key] = material;
 
@@ -92,6 +136,17 @@ void ResourceManager::AddModel(std::string key, Model* material) {
 
 Model* ResourceManager::GetModel(std::string key) {
 	return ResourceManager::GetInstance()->_models[key];
+}
+
+void ResourceManager::RemoveModel(std::string key) {
+	if (ResourceManager::GetInstance()->_models[key] == nullptr) return;
+	delete ResourceManager::GetModel(key);
+
+	ResourceManager::GetInstance()->_models[key] = nullptr;
+
+	std::string _convertedString = "Removed Model resource: ";
+	_convertedString.append(key);
+	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
 }
 
 void ResourceManager::LoadMeta(std::string offset) {
@@ -309,4 +364,41 @@ void ResourceManager::LoadMeta(std::string offset) {
 		}
 		metaFile.close();
 	}
+}
+
+void ResourceManager::UnLoad() {
+	//Safely delete all resources
+	//Textures
+	std::map<std::string, Texture*>::iterator tex_it;
+	for (tex_it = ResourceManager::GetInstance()->_textures.begin(); tex_it != ResourceManager::GetInstance()->_textures.end(); ++tex_it) {
+		if (tex_it->second != nullptr) RemoveTexture(tex_it->first);
+	}
+
+	//Meshes
+	std::map<std::string, Mesh*>::iterator mesh_it;
+	for (mesh_it = ResourceManager::GetInstance()->_meshes.begin(); mesh_it != ResourceManager::GetInstance()->_meshes.end(); ++mesh_it) {
+		if (mesh_it->second != nullptr) RemoveMesh(mesh_it->first);
+	}
+
+	//Shaders
+	std::map<std::string, Shader*>::iterator shad_it;
+	for (shad_it = ResourceManager::GetInstance()->_shaders.begin(); shad_it != ResourceManager::GetInstance()->_shaders.end(); ++shad_it) {
+		if (shad_it->second != nullptr) RemoveShader(shad_it->first);
+	}
+
+	//Materials
+	std::map<std::string, Material*>::iterator mat_it;
+	for (mat_it = ResourceManager::GetInstance()->_materials.begin(); mat_it != ResourceManager::GetInstance()->_materials.end(); ++mat_it) {
+		if (mat_it->second != nullptr) RemoveMaterial(mat_it->first);
+	}
+
+	//Models
+	std::map<std::string, Model*>::iterator model_it;
+	for (model_it = ResourceManager::GetInstance()->_models.begin(); model_it != ResourceManager::GetInstance()->_models.end(); ++model_it) {
+		if (model_it->second != nullptr) RemoveModel(model_it->first);
+	}
+}
+
+ResourceManager::~ResourceManager() {
+	ResourceManager::UnLoad(); // Unload resources
 }

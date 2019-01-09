@@ -3,7 +3,7 @@
 *
 *	Description: Header file for ResourceManager singleton class.
 *
-*	Version: 8/1/2019
+*	Version: 9/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -51,6 +51,11 @@ public:
 	static Texture* GetTexture(std::string key);
 
 	/**
+	* Deletes a texture from the textures map
+	*/
+	static void RemoveTexture(std::string key);
+
+	/**
 	* Adds a new mesh to the meshes map
 	*/
 	static void AddMesh(std::string key, Mesh* mesh);
@@ -59,6 +64,11 @@ public:
 	* Retrieves a mesh from the meshes map
 	*/
 	static Mesh* GetMesh(std::string key);
+
+	/**
+	* Deletes a mesh from the meshes map
+	*/
+	static void RemoveMesh(std::string key);
 
 	/**
 	* Adds a new shader to the shaders map
@@ -71,6 +81,11 @@ public:
 	static Shader* GetShader(std::string key);
 
 	/**
+	* Deletes a shader from the shaders map
+	*/
+	static void RemoveShader(std::string key);
+
+	/**
 	* Adds a new material to the materials map
 	*/
 	static void AddMaterial(std::string key, Material* material);
@@ -79,6 +94,11 @@ public:
 	* Retrieves a material from the materials map
 	*/
 	static Material* GetMaterial(std::string key);
+
+	/**
+	* Deletes a material from the materials map
+	*/
+	static void RemoveMaterial(std::string key);
 
 	/**
 	* Adds a new model to the materials map
@@ -91,9 +111,24 @@ public:
 	static Model* GetModel(std::string key);
 
 	/**
+	* Deletes a model from the models map
+	*/
+	static void RemoveModel(std::string key);
+
+	/**
 	* Loads external meta file and loads specified resources into memory
 	*/
 	static void LoadMeta(std::string offset);
+
+	/**
+	* Unloads all resources from the heap.
+	*/
+	static void UnLoad();
+
+	/**
+	* Destructor, Unloads all assets and deletes lists
+	*/
+	~ResourceManager();
 };
 
 
