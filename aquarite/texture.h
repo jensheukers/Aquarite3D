@@ -3,13 +3,13 @@
 *
 *	Description: Main Header for Texture class, ported from Project Dynamite
 *
-*   Version: 27/11/2018
+*	Version: 11/1/2019
 *
 *	© 2018, Jens Heukers
 */
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
-#pragma once
-#include <Windows.h>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -112,3 +112,5 @@ public:
 	*/
 	void SetColor(glm::vec4 color);
 };
+
+#endif // !TEXTURE_H

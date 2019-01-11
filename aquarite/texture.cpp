@@ -3,10 +3,16 @@
 *
 *	Description: Source file for Texture class, ported from Project Dynamite
 *
-*	Version: 27/11/2018
+*	Version: 11/1/2019
 *
 *	© 2018, Jens Heukers
 */
+#ifdef _CRT_SECURE_NO_WARNINGS
+#undef _CRT_SECURE_NO_WARNINGS
+#endif
+#define _CRT_SECURE_NO_WARNINGS 1
+
+#include <Windows.h>
 #include <string>
 #include "texture.h"
 #include "debug.h"
