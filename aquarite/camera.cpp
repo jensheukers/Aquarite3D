@@ -1,9 +1,9 @@
 /**
 *	Filename: camera.cpp
 *
-*	Description: Source file for Camera class.
+*	Description: Source file for Camera and Frustum class.
 *
-*	Version: 30/12/2018
+*	Version: 10/1/2019
 *
 *	© 2018, Jens Heukers
 */

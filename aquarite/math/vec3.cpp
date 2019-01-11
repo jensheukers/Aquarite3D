@@ -105,8 +105,8 @@ Vec3 Vec3::Lerp(Vec3 a,Vec3 b, float amount) {
 	return Vec3(x,y,z);
 }
 
-float Vec3::Angle() {
-	return atan2(this->y, this->x);
+float Vec3::Angle(Vec3 other) {
+	return atan2(other.y - this->y, other.x - this->x);
 }
 
 Vec3* Vec3::Normalize() {
@@ -134,6 +134,10 @@ Vec3* Vec3::Limit(Vec3 other) {
 
 glm::vec3 Vec3::ToGLM() {
 	return glm::vec3(this->x,this->y,this->z);
+}
+
+Vec3 Vec3::ToVec3(glm::vec3 glm) {
+	return Vec3(glm.x, glm.y, glm.z);
 }
 
 float Vec3::RadToDeg(float r) {

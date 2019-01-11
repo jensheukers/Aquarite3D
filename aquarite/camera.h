@@ -3,13 +3,14 @@
 *
 *	Description: Header file for Camera class.
 *
-*	Version: 30/12/2018
+*	Version: 10/1/2019
 *
 *	© 2018, Jens Heukers
 */
 #ifndef CAMERA_H
 #define CAMERA_H 
 #include <glm/glm.hpp>
+#include "math/vec3.h"
 #include "math/pointx.h"
 
 class Camera {

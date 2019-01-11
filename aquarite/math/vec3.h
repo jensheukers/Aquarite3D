@@ -103,7 +103,7 @@ public:
 	/**
 	* Returns the angle
 	*/
-	float Angle();
+	float Angle(Vec3 other);
 	
 	/**
 	* Normalize the vector by magnitude
@@ -119,6 +119,11 @@ public:
 	* Converts Vec3 To a glm::vec3 type
 	*/
 	glm::vec3 ToGLM();
+
+	/**
+	* Converts glm::vec3 To a Vec3 type
+	*/
+	static Vec3 ToVec3(glm::vec3 glm);
 
 	/**
 	* Converts from radians to degrees, returns float
