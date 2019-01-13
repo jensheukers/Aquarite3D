@@ -9,6 +9,7 @@
 */
 #include <Windows.h>
 #include <chrono>
+#include "soundmanager.h"
 #include "core.h"
 #include "scenemanager.h"
 #include "resourcemanager.h"
@@ -79,6 +80,9 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 
 	// Initialize Input, (if end user has not done it yet)
 	Input::Init(renderer->GetWindow());
+
+	// Initialize SoundManager, (if end user has not done it yet)
+	SoundManager::Init();
 
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
@@ -160,6 +164,9 @@ void Core::Destroy() {
 	}
 
 	delete SceneManager::GetInstance();
+
+	//Exit alut
+	SoundManager::Destroy();
 
 	delete Core::GetInstance(); // Delete the instance
 	Debug::Log("Core Instance deleted", typeid(Core).name()); // Print Log

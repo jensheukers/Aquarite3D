@@ -15,6 +15,7 @@ set(GLFW_DIR "external/glfw")
 set(GLEW_DIR "external/glew")
 set(GLM_DIR "external/glm")
 set(OPENAL_DIR "external/openal")
+set(ALUT_DIR "external/alut")
 
 include_directories(${GLFW_DIR}/include ${GLEW_DIR}/include ${GLM_DIR} ${OPENAL_DIR}/include)
 link_directories(${GLFW_DIR}/lib-vc2015 ${GLEW_DIR}/lib/Win32 ${OPENAL_DIR}/libs/Win32)
@@ -28,6 +29,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "/MD")
 
 # Link libraries
 target_link_libraries(Aquarite3D glfw3.lib glfw3dll.lib opengl32.lib glew32.lib glew32s.lib OpenAL32.lib)
+SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 
 # TODO: Set Commands
 add_custom_command(TARGET Aquarite3D POST_BUILD 
@@ -40,7 +44,7 @@ add_custom_command(TARGET Aquarite3D POST_BUILD
 						
 add_custom_command(TARGET Aquarite3D POST_BUILD 
 					COMMAND ${CMAKE_COMMAND} -E copy
-						${CMAKE_SOURCE_DIR}/external/openal/bin/Win32/soft_oal.dll $<TARGET_FILE_DIR:Aquarite3D>)
+						${CMAKE_SOURCE_DIR}/external/openal/bin/Win32/OpenAL32.dll $<TARGET_FILE_DIR:Aquarite3D>)
 						
 add_custom_command(TARGET Aquarite3D POST_BUILD 
 					COMMAND ${CMAKE_COMMAND} -E make_directory
