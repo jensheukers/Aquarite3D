@@ -12,3 +12,5 @@ material=defaultMaterial
 name=Plane
 mesh=Plane
 material=defaultMaterial
+radius=20.0f
+ignoreFrustum=1;

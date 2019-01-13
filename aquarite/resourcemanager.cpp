@@ -357,6 +357,14 @@ void ResourceManager::LoadMeta(std::string offset) {
 						if (segments[0] == "material") {
 							currentModel->AddMaterial(ResourceManager::GetMaterial(segments[1]));
 						}
+
+						if (segments[0] == "radius") {
+							currentModel->SetSphereRadius(std::stof(segments[1]));
+						}
+
+						if (segments[0] == "ignoreFrustum") {
+							currentModel->IgnoreFrustum(std::stoi(segments[1]));
+						}
 					}
 					file.close();
 				}
