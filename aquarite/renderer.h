@@ -28,6 +28,7 @@ private:
 	const size_t MAX_LIGHTS = 25; /// @brief The maximum numbers of lights allowed to be drawn
 	glm::mat4 view; /// @Brief The view matrix
 	glm::mat4 projection; /// @Brief The projection matrix
+	Model* lastModel; /// @Brief the last computed model, if current model would be same as the last, we can skip binding ect.
 public:
 	/**
 	* Initialize the Renderer, Initialize GLFW & GLEW and create a window context.

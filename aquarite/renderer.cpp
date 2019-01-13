@@ -116,6 +116,9 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 	//Then continue
 
 	for (int i = 0; i < model->GetMeshesCount(); i++) {
+		bool modelSameAsLast = false;
+		if (lastModel == model && model->GetMeshesCount() == 1) modelSameAsLast = true; // If model is same as last computed model AND only 1 mesh is present
+
 		// Prepare Draw
 		if (model->GetMaterialCount() < 1) return;
 
@@ -128,8 +131,10 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.z), glm::vec3(0, 0, 1)); // Rotation
 		modelTransform = glm::scale(modelTransform, glm::vec3(scale.x, scale.y, scale.z)); // scale
 		
-		// Define shader program 
-		glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram());
+		// Define shader program
+		if (!modelSameAsLast) {
+			glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram());
+		}
 
 		//Handle lighting
 		glm::vec3 diffuseColor = model->GetMaterial(i)->GetColor() * model->GetMaterial(i)->GetDiffuseColor();
@@ -187,15 +192,18 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 		//Bind VAO
 		if (model->GetMesh(i)->GetVAO() == NULL) return;
 
-		glBindVertexArray(model->GetMesh(i)->GetVAO());
+		if (!modelSameAsLast) {
+			glBindVertexArray(model->GetMesh(i)->GetVAO());
 
-		if (model->GetMaterial(i)->GetDiffuse()) {
-			model->GetMaterial(i)->GetShader()->SetBool("hasTexture", true); // Set hasTexture to true
-			glBindTexture(GL_TEXTURE_2D, model->GetMaterial(i)->GetDiffuse()->GetGLTexture());
+			if (model->GetMaterial(i)->GetDiffuse()) {
+				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", true); // Set hasTexture to true
+				glBindTexture(GL_TEXTURE_2D, model->GetMaterial(i)->GetDiffuse()->GetGLTexture());
+			}
+			else {
+				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", false); // Set hasTexture to true
+			}
 		}
-		else {
-			model->GetMaterial(i)->GetShader()->SetBool("hasTexture", false); // Set hasTexture to true
-		}
+
 
 		//Handle transformations in vertex shader
 		GLint modelLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "model");
@@ -208,10 +216,6 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 
 		// Draw
 		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh(i)->GetVerticesCount());
-
-		//Cleanup
-		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
@@ -239,6 +243,9 @@ void Renderer::PollEvents() {
 void Renderer::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity(); // Reset the matrix
+
+	glBindVertexArray(0); // Unbind
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind current texture unit
 }
 
 GLFWwindow* Renderer::GetWindow() {
