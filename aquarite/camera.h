@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Camera class.
 *
-*	Version: 10/1/2019
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -13,13 +13,103 @@
 #include "math/vec3.h"
 #include "math/pointx.h"
 
+/*
+	Frustum  class copied from: http://cgvr.informatik.uni-bremen.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
+	Implementation is not the best there is but it will do the job :)
+*/
+
+class Plane {
+public:
+	Vec3 normal, point;
+	float d;
+
+	Plane::Plane(Vec3 &v1, Vec3 &v2, Vec3 &v3);
+	Plane::Plane(void);
+	Plane::~Plane();
+
+	void set3Points(Vec3 &v1, Vec3 &v2, Vec3 &v3);
+	void setNormalAndPoint(Vec3 &normal, Vec3 &point);
+	void setCoefficients(float a, float b, float c, float d);
+	float distance(Vec3 &p);
+};
+
+class Frustum {
+private:
+	enum {
+		TOP = 0, BOTTOM, LEFT,
+		RIGHT, NEARP, FARP
+	};
+
+public:
+
+	enum { OUTSIDE, INTERSECT, INSIDE };
+
+	Plane pl[6];
+
+	Vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
+	float nearD, farD, ratio, angle, tang;
+	float nw, nh, fw, fh;
+
+	Frustum::Frustum();
+	Frustum::~Frustum();
+
+	void setCamInternals(float angle, float ratio, float nearD, float farD);
+	void setCamDef(Vec3 &p, Vec3 &l, Vec3 &u);
+	int pointInFrustum(Vec3 &p);
+	int sphereInFrustum(Vec3 &p, float raio);
+};
+
+//---------------------------------------------------
+//Camera class
+//--------------------------------------------------
+
 class Camera {
 protected:
+	Frustum * frustum; /// @brief The frustum of the camera
+
+	float yaw; /// @brief the yaw of the camera
+	float pitch; /// @brief the pitch of the camera
+
 	glm::vec3 pos; /// @brief The camera position in world space
 	glm::vec3 target; /// @brief The camera target
 	glm::vec3 up; /// @brief The camera up vector
+
+	/**
+	* Set the front of the camera (direction)
+	*/
+	void SetTarget(glm::vec3 targetPos);
 public:
 	Camera();
+
+	/**
+	* Returns the camera frustum
+	*/
+	Frustum* GetFrustum();
+
+	/**
+	* Updates the camera's front
+	*/
+	void UpdateFront();
+
+	/**
+	* Set the Yaw of the camera
+	*/
+	void SetYaw(float amount);
+
+	/**
+	* Gets the Yaw of the camera
+	*/
+	float GetYaw();
+
+	/**
+	* Set the Pitch of the camera
+	*/
+	void SetPitch(float amount);
+
+	/**
+	* Gets the Pitch of the camera
+	*/
+	float GetPitch();
 
 	/**
 	* Set the position of the camera
@@ -30,11 +120,6 @@ public:
 	* Get the position of the camera
 	*/
 	glm::vec3 GetPos();
-
-	/**
-	* Set the front of the camera (direction)
-	*/
-	void SetTarget(glm::vec3 targetPos);
 
 	/**
 	* Returns the front of the camera (direction)
@@ -64,8 +149,6 @@ enum CameraDirection {
 
 class FPSCamera : public Camera {
 private:
-	float yaw;	
-	float pitch;
 	float lastX;
 	float lastY;
 	float fov;

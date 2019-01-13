@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Model class.
 *
-*	Version: 30/12/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -11,6 +11,8 @@
 
 Model::Model() {
 	this->name = "Unnamed Model";
+	this->sphereRadius = 1.0f; // Default sphere radius
+	this->ignoreFrustum = false; // we dont want to ignore frustum by default
 }
 
 Material* Model::GetMaterial(int index) {
@@ -51,4 +53,20 @@ void Model::SetName(std::string name) {
 
 std::string Model::GetName() {
 	return this->name;
+}
+
+float Model::GetSphereRadius() {
+	return this->sphereRadius;
+}
+
+void Model::SetSphereRadius(float amount) {
+	this->sphereRadius = amount;
+}
+
+bool Model::IgnoreFrustumState() {
+	return this->ignoreFrustum;
+}
+
+void Model::IgnoreFrustum(bool state) {
+	this->ignoreFrustum = state;
 }

@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 9/1/2019
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -107,6 +107,18 @@ void Core::HandleUpdates() {
 	if (SceneManager::GetActiveScene()) {
 		// Update all entities and their children
 		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->UpdateFront();
+			//Update renderer
+			renderer->Update(SceneManager::GetActiveScene()->GetActiveCamera());
+
+			//Update frustum
+			Vec3 cameraPos = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos());
+			Vec3 cameraTarget = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos() + SceneManager::GetActiveScene()->GetActiveCamera()->GetTarget());
+			Vec3 cameraUp = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetUp());
+
+			SceneManager::GetActiveScene()->GetActiveCamera()->GetFrustum()->setCamDef(cameraPos,cameraTarget,cameraUp);
+
+			//Render children
 			for (unsigned i = 0; i < SceneManager::GetActiveScene()->GetChildren().size(); i++) {
 				SceneManager::GetActiveScene()->UpdateSceneChildren();
 				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera());

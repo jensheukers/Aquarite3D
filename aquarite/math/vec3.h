@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Vec3 class, Note that this class can also be used as a 2 dimensional vector
 *
-*	Version: 22/11/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -24,6 +24,15 @@ public:
 	* Default Constructor
 	*/
 	Vec3();
+
+	//OPERATORS
+	Vec3 Vec3::operator +(Vec3 &v);
+	Vec3 Vec3::operator -(const Vec3 &v);
+	Vec3 Vec3::operator *(Vec3 &v);
+	Vec3 Vec3::operator *(float t);
+	Vec3 Vec3::operator /(float t);
+	Vec3 Vec3::operator -(void);
+
 
 	/**
 	* Constructor with parameters
@@ -101,6 +110,11 @@ public:
 	float Magnitude();
 
 	/**
+	* Return the innerProduct
+	*/
+	float InnerProduct(Vec3  &v);
+
+	/**
 	* Returns the angle
 	*/
 	float Angle(Vec3 other);
@@ -134,6 +148,11 @@ public:
 	* Converts from degrees to radians, returns float
 	*/
 	static float DegToRad(float d);
+
+	/**
+	* Gets the distance between two points
+	*/
+	static float Distance(Vec3 a, Vec3 b);
 
 	/*** Returns a Vec3 with coordinates: 0.0f. 1.0f, 0.0f*/
 	static Vec3 Up() { return Vec3(0.0f, 1.0f, 0.0f); }

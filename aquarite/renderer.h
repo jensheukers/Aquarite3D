@@ -3,7 +3,7 @@
 *
 *	Description: Header file for renderer class
 *
-*	Version: 17/12/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -26,11 +26,19 @@ private:
 	int screenWidth, screenHeight; /// @brief The screen width and Height
 	std::vector<Light*> _lights; /// @brief Lights vector
 	const size_t MAX_LIGHTS = 25; /// @brief The maximum numbers of lights allowed to be drawn
+	glm::mat4 view; /// @Brief The view matrix
+	glm::mat4 projection; /// @Brief The projection matrix
 public:
 	/**
 	* Initialize the Renderer, Initialize GLFW & GLEW and create a window context.
 	*/
 	int Initialize(std::string windowTitle, int width, int height);
+
+
+	/**
+	* Sets up view and projection matrix for this frame
+	*/
+	void Update(Camera* camera);
 
 	/**
 	* Renders a sprite on the screen, uses a different shader than mesh rendering 

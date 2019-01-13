@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Model class.
 *
-*	Version: 30/12/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -18,6 +18,8 @@ private:
 	std::vector<Material*> materials; /// @brief List of materials used on this model, material index should match mesh index
 	std::vector<Mesh*> meshes; /// @brief List of meshes used on this Model, material index should match mesh index
 	std::string name; /// @brief Name of the model
+	float sphereRadius; /// @brief The radius of the sphere of the model, for frustum culling
+	bool ignoreFrustum; /// @brief If true frustum culling will be ignored for this model
 public:
 	/**
 	* Constructor
@@ -73,6 +75,25 @@ public:
 	* Returns the name of th emodel
 	*/
 	std::string GetName();
-};
 
+	/**
+	* Returns the sphere radius for this model
+	*/
+	float GetSphereRadius();
+
+	/**
+	* Sets the sphere radius for this model
+	*/
+	void SetSphereRadius(float amount);
+
+	/**
+	* Returns the IgnoreFrustum state
+	*/
+	bool IgnoreFrustumState();
+
+	/**
+	* Sets ignoreFrustum
+	*/
+	void IgnoreFrustum(bool state);
+};
 #endif // !MODEL_H

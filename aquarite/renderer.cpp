@@ -3,7 +3,7 @@
 *
 *	Description: Source file for renderer class
 *
-*	Version: 30/12/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -52,11 +52,27 @@ int Renderer::Initialize(std::string windowTitle, int width, int height) {
 	
 	glEnable(GL_DEPTH_TEST);
 
+	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+
 	//Setup viewport
 	glViewport(0,0,width,height);
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glfwSetFramebufferSizeCallback(_window, FrameBufferSizeCallback);
 	return 0;
+}
+
+void Renderer::Update(Camera* camera) {
+	//Translate Camera Vectors to GLM vectors so OpenGL understands
+	glm::vec3 cameraPos = glm::vec3(camera->GetPos().x, camera->GetPos().y, camera->GetPos().z); // Position
+	glm::vec3 cameraTarget = glm::vec3(camera->GetTarget().x, camera->GetTarget().y, camera->GetTarget().z); // Front
+	glm::vec3 cameraUp = glm::vec3(camera->GetUp().x, camera->GetUp().y, camera->GetUp().z); // Up
+
+	//View matrix
+	view = glm::lookAt(cameraPos, cameraPos + cameraTarget, cameraUp);
+
+	//Projection matrix
+	projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+	camera->GetFrustum()->setCamInternals(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 }
 
 void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {
@@ -80,19 +96,41 @@ void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale
 
 		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh(i)->GetVerticesCount()); // Draw
 
-																			 //Cleanup
+		//Cleanup
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
 void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {
+	//Calculate distance from camera to model
+	//Some math here that somehow magicly works, lets just keep calling this magic it does its thing :)
+	float sphereSize = model->GetSphereRadius();
+	sphereSize += position.Distance(Vec3::ToVec3(camera->GetPos()));
+	Vec3 calculatedPos;
+	calculatedPos.Set(position);
+	calculatedPos = *calculatedPos.Minus(Vec3::ToVec3(camera->GetPos()));
+
+	//If we dont want to ignore frustum state
+	if (!model->IgnoreFrustumState()) {
+		//If the sphere is in our frustum
+		if (camera->GetFrustum()->sphereInFrustum(calculatedPos, sphereSize) == Frustum::OUTSIDE) return;
+	}
+	//Then continue
+
 	for (int i = 0; i < model->GetMeshesCount(); i++) {
 		// Prepare Draw
 		if (model->GetMaterialCount() < 1) return;
 
 		if (!model->GetMaterial(i)) return;
 
+		glm::mat4 modelTransform(1);
+		modelTransform = glm::translate(modelTransform, glm::vec3(position.x, position.y, position.z)); // position
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.x), glm::vec3(1, 0, 0)); // Rotation
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.y), glm::vec3(0, 1, 0)); // Rotation
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.z), glm::vec3(0, 0, 1)); // Rotation
+		modelTransform = glm::scale(modelTransform, glm::vec3(scale.x, scale.y, scale.z)); // scale
+		
 		// Define shader program 
 		glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram());
 
@@ -162,24 +200,6 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 			model->GetMaterial(i)->GetShader()->SetBool("hasTexture", false); // Set hasTexture to true
 		}
 
-		glm::mat4 modelTransform(1);
-		modelTransform = glm::translate(modelTransform, glm::vec3(position.x, position.y, position.z)); // position
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.x), glm::vec3(1, 0, 0)); // Rotation
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.y), glm::vec3(0, 1, 0)); // Rotation
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.z), glm::vec3(0, 0, 1)); // Rotation
-		modelTransform = glm::scale(modelTransform, glm::vec3(scale.x, scale.y, scale.z)); // scale
-
-																						   //Translate Camera Vectors to GLM vectors so OpenGL understands
-		glm::vec3 cameraPos = glm::vec3(camera->GetPos().x, camera->GetPos().y, camera->GetPos().z); // Position
-		glm::vec3 cameraTarget = glm::vec3(camera->GetTarget().x, camera->GetTarget().y, camera->GetTarget().z); // Front
-		glm::vec3 cameraUp = glm::vec3(camera->GetUp().x, camera->GetUp().y, camera->GetUp().z); // Up
-
-		glm::mat4 view(1);
-		view = glm::lookAt(cameraPos, cameraPos + cameraTarget, cameraUp);
-
-		glm::mat4 projection(1);
-		projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
-
 		//Handle transformations in vertex shader
 		GLint modelLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "model");
 		GLint viewLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "view");
@@ -221,6 +241,7 @@ void Renderer::PollEvents() {
 
 void Renderer::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity(); // Reset the matrix
 }
 
 GLFWwindow* Renderer::GetWindow() {

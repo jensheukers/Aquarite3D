@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Vec3 class
 *
-*	Version: 22/11/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -21,6 +21,74 @@ Vec3::Vec3(float x, float y, float z) {
 	this->x = x;
 	this->y = y;
 	this->z = z;
+}
+
+Vec3 Vec3::operator+(Vec3 &v) {
+
+	Vec3 res;
+
+	res.x = x + v.x;
+	res.y = y + v.y;
+	res.z = z + v.z;
+
+	return(res);
+}
+
+Vec3 Vec3::operator-(const Vec3 &v) {
+
+	Vec3 res;
+
+	res.x = x - v.x;
+	res.y = y - v.y;
+	res.z = z - v.z;
+
+	return(res);
+}
+
+Vec3 Vec3::operator-(void) {
+
+	Vec3 res;
+
+	res.x = -x;
+	res.y = -y;
+	res.z = -z;
+
+	return(res);
+}
+
+// cross product
+Vec3 Vec3::operator*(Vec3 &v) {
+
+	Vec3 res;
+
+	res.x = y * v.z - z * v.y;
+	res.y = z * v.x - x * v.z;
+	res.z = x * v.y - y * v.x;
+
+	return (res);
+}
+
+Vec3 Vec3::operator*(float t) {
+
+	Vec3 res;
+
+	res.x = x * t;
+	res.y = y * t;
+	res.z = z * t;
+
+	return (res);
+}
+
+
+Vec3 Vec3::operator/(float t) {
+
+	Vec3 res;
+
+	res.x = x / t;
+	res.y = y / t;
+	res.z = z / t;
+
+	return (res);
 }
 
 Vec3* Vec3::Set(Vec3 other) {
@@ -156,9 +224,21 @@ bool Vec3::Equals(Vec3 other) {
 }
 
 float Vec3::Distance(Vec3 other) {
-	return this->Minus(other)->Magnitude();
+	Vec3 calculatedVec3;
+	calculatedVec3.Set(*this);
+
+	return calculatedVec3.Minus(other)->Magnitude();
 }
 
 float Vec3::Magnitude() {
 	return sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
+}
+
+float Vec3::InnerProduct(Vec3 &v) {
+	return (x * v.x + y * v.y + z * v.z);
+}
+
+float Vec3::Distance(Vec3 a, Vec3 b) {
+	Vec3 returnVec = a - b;
+	return returnVec.Magnitude();
 }
