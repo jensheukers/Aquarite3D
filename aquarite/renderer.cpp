@@ -72,7 +72,7 @@ void Renderer::Update(Camera* camera) {
 
 	//Projection matrix
 	projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
-	camera->GetFrustum()->setCamInternals(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+	camera->GetFrustum()->setCamInternals(45.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 }
 
 void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {
@@ -106,15 +106,11 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 	//Calculate distance from camera to model
 	//Some math here that somehow magicly works, lets just keep calling this magic it does its thing :)
 	float sphereSize = model->GetSphereRadius();
-	sphereSize += position.Distance(Vec3::ToVec3(camera->GetPos()));
-	Vec3 calculatedPos;
-	calculatedPos.Set(position);
-	calculatedPos = *calculatedPos.Minus(Vec3::ToVec3(camera->GetPos()));
 
 	//If we dont want to ignore frustum state
 	if (!model->IgnoreFrustumState()) {
 		//If the sphere is in our frustum
-		if (camera->GetFrustum()->sphereInFrustum(calculatedPos, sphereSize) == Frustum::OUTSIDE) return;
+		if (camera->GetFrustum()->sphereInFrustum(position, sphereSize) == Frustum::OUTSIDE) return;
 	}
 	//Then continue
 
