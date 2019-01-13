@@ -131,6 +131,9 @@ void Core::HandleUpdates() {
 		}
 	}
 
+	//Update SoundManager
+	SoundManager::Update();
+
 	if (!glfwWindowShouldClose(renderer->GetWindow())) { // Check if window should close
 		renderer->SwapBuffers(); // Swap buffers
 		renderer->PollEvents(); // Poll Events
