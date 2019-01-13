@@ -51,6 +51,7 @@ int Renderer::Initialize(std::string windowTitle, int width, int height) {
 	}
 	
 	glEnable(GL_DEPTH_TEST);
+	glCullFace(GL_BACK);
 
 	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 
@@ -61,7 +62,7 @@ int Renderer::Initialize(std::string windowTitle, int width, int height) {
 	return 0;
 }
 
-void Renderer::Update(Camera* camera) {
+void Renderer::Update(Camera* camera, float fov) {
 	//Translate Camera Vectors to GLM vectors so OpenGL understands
 	glm::vec3 cameraPos = glm::vec3(camera->GetPos().x, camera->GetPos().y, camera->GetPos().z); // Position
 	glm::vec3 cameraTarget = glm::vec3(camera->GetTarget().x, camera->GetTarget().y, camera->GetTarget().z); // Front
@@ -71,8 +72,8 @@ void Renderer::Update(Camera* camera) {
 	view = glm::lookAt(cameraPos, cameraPos + cameraTarget, cameraUp);
 
 	//Projection matrix
-	projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
-	camera->GetFrustum()->setCamInternals(45.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
+	camera->GetFrustum()->setCamInternals(fov, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f);
 }
 
 void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {

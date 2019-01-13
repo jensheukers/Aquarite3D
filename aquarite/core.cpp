@@ -62,6 +62,7 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 
 	//Resolution
 	this->_resolution = resolution;
+	this->_fov = 45.0f; // Set fov to 45.0f by default
 
 	// Initialize Renderer
 	renderer = new Renderer();
@@ -109,7 +110,7 @@ void Core::HandleUpdates() {
 		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
 			SceneManager::GetActiveScene()->GetActiveCamera()->UpdateFront();
 			//Update renderer
-			renderer->Update(SceneManager::GetActiveScene()->GetActiveCamera());
+			renderer->Update(SceneManager::GetActiveScene()->GetActiveCamera(), _fov);
 
 			//Update frustum
 			Vec3 cameraPos = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos());
@@ -194,4 +195,16 @@ unsigned Core::GetTimeElapsed() {
 
 void Core::SetResolutionReference(Point2i res) {
 	Core::GetInstance()->_resolution = res;
+}
+
+void Core::SetFov(float amount) {
+	if (amount < 0) {
+		amount = 0;
+	}
+
+	Core::GetInstance()->_fov = amount;
+}
+
+float Core::GetFov() {
+	return Core::GetInstance()->_fov;
 }

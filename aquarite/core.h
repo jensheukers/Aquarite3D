@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Core class.
 *
-*	Version: 30/12/2018
+*	Version: 13/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -26,6 +26,7 @@ private:
 
 	//Resolution
 	Point2i _resolution; /// @brief The resolution of the canvas
+	float _fov; /// @brief The field of view
 
 	// Time variables
 	unsigned _timeStart; /// @brief The time in milliseconds when the Initialize() method was called
@@ -109,6 +110,16 @@ public:
 	* Sets the resolution refernence, method is mostly called by the renderer
 	*/
 	static void SetResolutionReference(Point2i res);
+
+	/**
+	* Sets the field of view
+	*/
+	static void SetFov(float amount);
+
+	/**
+	* Returns the field of view
+	*/
+	static float GetFov();
 
 	/**
 	* Returns the time elapsed since start of program

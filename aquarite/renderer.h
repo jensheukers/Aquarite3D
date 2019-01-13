@@ -38,7 +38,7 @@ public:
 	/**
 	* Sets up view and projection matrix for this frame
 	*/
-	void Update(Camera* camera);
+	void Update(Camera* camera, float fov);
 
 	/**
 	* Renders a sprite on the screen, uses a different shader than mesh rendering 
