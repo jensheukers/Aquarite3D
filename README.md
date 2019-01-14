@@ -43,7 +43,8 @@ A example Meta file can be found in game/res/example.meta
 Model files are stored as .amod files in Aquarite3D. These files can contain multiple models, but it is not necessary to store all models in 1 file.
 
 To create model files you need to have a mesh and a material, these should be specified in the .meta file
-A model can hold multiple meshes and materials, a model should be difined in this order:
+A model can hold multiple meshes and materials, and holds 2 variables for frustum culling purposes(see below).</br>
+a model should be defined in this order:
 ```
 #MODEL
 name=UNIQUE_MODEL_NAME
@@ -51,6 +52,8 @@ mesh=MESH_01
 material=MATERIAL_01
 mesh=MESH_02
 material=MATERIAL_02
+radius=20.0f
+ignoreFrustum=0
 ```
 As you can see you can define multiple meshes and materials, though it should be noted that the material of the mesh should be defined <b>below</b> the mesh itself. So if you want to use the same material on multiple meshes:
 ```
@@ -60,6 +63,8 @@ mesh=MESH_01
 material=MATERIAL_01
 mesh=MESH_02
 material=MATERIAL_01
+radius=20.0f
+ignoreFrustum=0
 ```
 As you can see Mesh_02 now uses Material_01
 A example Model file can be found in game/res/example/models/model.amod
@@ -87,6 +92,11 @@ If you dont want to use a diffuseMap or any other property you can just remove t
 <b> Temporary Notice </b></br>
 Currently shaders are not supported in meta files, they will be in the near future and shaders can then be loaded by the ResourceManager, for now you can use the ```_aquariteDefaultShader``` shader that is loaded by default. 
 Also more properties like normal maps are to be added.
+
+## Optimization tips
+To improve the performance of Aquarite3D there are a few things you may want to know.
+Aqaurite3D remember's the last drawn object, so it is adviced to child all objects to a entity, because children get drawn before parents. This makes sure there are almost no draw calls to the GPU. 
+Also you could try baking entire model textures and import the model as one single mesh and one single material, This also makes sure there are less draw calls.
 
 ## License
 
