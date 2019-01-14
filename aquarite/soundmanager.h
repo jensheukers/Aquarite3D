@@ -15,10 +15,12 @@
 #include "math/vec3.h"
 #include "sound.h"
 
-//Listener structure
+//Listener Structure
 struct Listener {
 	Vec3 position; /// @brief The listener's Position
 	Vec3 velocity; /// @brief The listener's Velocity
+	Vec3 head; /// @brief The orientation head
+	Vec3 up; /// @brief The orientation head
 };
 
 class SoundManager {
@@ -46,17 +48,17 @@ public:
 	/**
 	* Update gets called each frame by core, it handles things like listener's position ect.
 	*/
-	static void Update();
+	static void Update(Vec3 head, Vec3 up);
 
 	/**
-	* Sets the currently active listener
+	* Sets the listeners position
 	*/
-	static void SetListener(Listener* listener);
+	static void SetListenerPosition(Vec3 pos);
 
 	/**
-	* Returns the currently active listener
+	* Returns the listeners position
 	*/
-	static Listener* GetListener();
+	static Vec3& GetListenerPosition();
 
 	/**
 	* Adds a new sound to the sounds list

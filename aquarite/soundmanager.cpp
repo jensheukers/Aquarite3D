@@ -32,15 +32,17 @@ void SoundManager::Init() {
 		Debug::Log("Could not set current audio context", typeid(*_instance).name());
 	}
 
-	SoundManager::SetListener(new Listener()); // Create default listener instance
+	SoundManager::GetInstance()->listener = new Listener(); // Create default listener instance
+	SoundManager::GetInstance()->listener->head = Vec3(0.0f, 0.0f, 1.0f);
+	SoundManager::GetInstance()->listener->up = Vec3(0.0f, -1.0f, 0.0f);
 	Debug::Log("Initialized", typeid(*_instance).name());
 }
 
-void SoundManager::Update() {
-	Listener* listener = SoundManager::GetListener();
+void SoundManager::Update(Vec3 head, Vec3 up) {
+	Listener* listener = SoundManager::GetInstance()->listener;
 	if (listener == nullptr) return;
-
-	ALfloat _listenerOrientation[] { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+	ALfloat _listenerOrientation[]{ listener->head.x, listener->head.y, listener->head.z, 
+									listener->up.x, listener->up.y, listener->up.z };
 	alListener3f(AL_POSITION, listener->position.x, listener->position.y, listener->position.z);
 	alListener3f(AL_VELOCITY, listener->velocity.x, listener->velocity.y, listener->velocity.z);
 	alListenerfv(AL_ORIENTATION, _listenerOrientation);
@@ -55,12 +57,12 @@ void SoundManager::Update() {
 
 }
 
-void SoundManager::SetListener(Listener* listener) {
-	SoundManager::GetInstance()->listener = listener;
+void SoundManager::SetListenerPosition(Vec3 pos) {
+	SoundManager::GetInstance()->listener->position = pos;
 }
 
-Listener* SoundManager::GetListener() {
-	return SoundManager::GetInstance()->listener;
+Vec3& SoundManager::GetListenerPosition() {
+	return SoundManager::GetInstance()->listener->position;
 }
 
 void SoundManager::AddSound(Sound* sound) {
@@ -103,4 +105,12 @@ void SoundManager::Destroy() {
 	alcMakeContextCurrent(NULL);
 	alcDestroyContext(SoundManager::GetInstance()->context);
 	alcCloseDevice(SoundManager::GetInstance()->device);
+
+	//Remove and DELETE all sounds
+	for (size_t i = 0; i < SoundManager::GetInstance()->_sounds.size(); i++) {
+		delete SoundManager::GetInstance()->_sounds[i]; // Delete instance
+		SoundManager::RemoveSound(i); // Remove pointer
+
+		Debug::Log("Removed sound instance: " + i, typeid(*SoundManager::GetInstance()).name());
+	}
 }

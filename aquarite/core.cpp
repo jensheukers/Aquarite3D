@@ -112,6 +112,9 @@ void Core::HandleUpdates() {
 	if (SceneManager::GetActiveScene()) {
 		// Update all entities and their children
 		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			//Update SoundManager
+			SoundManager::Update(Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetTarget()), Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetUp()));
+
 			SceneManager::GetActiveScene()->GetActiveCamera()->UpdateFront();
 			//Update renderer
 			renderer->Update(SceneManager::GetActiveScene()->GetActiveCamera(), _fov);
@@ -130,9 +133,6 @@ void Core::HandleUpdates() {
 			}
 		}
 	}
-
-	//Update SoundManager
-	SoundManager::Update();
 
 	if (!glfwWindowShouldClose(renderer->GetWindow())) { // Check if window should close
 		renderer->SwapBuffers(); // Swap buffers
