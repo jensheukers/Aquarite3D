@@ -32,6 +32,7 @@ void SoundManager::Init() {
 		Debug::Log("Could not set current audio context", typeid(*_instance).name());
 	}
 
+	SoundManager::SetListener(new Listener()); // Create default listener instance
 	Debug::Log("Initialized", typeid(*_instance).name());
 }
 
@@ -54,5 +55,7 @@ Listener* SoundManager::GetListener() {
 }
 
 void SoundManager::Destroy() {
-
+	alcMakeContextCurrent(NULL);
+	alcDestroyContext(SoundManager::GetInstance()->context);
+	alcCloseDevice(SoundManager::GetInstance()->device);
 }
