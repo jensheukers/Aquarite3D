@@ -35,11 +35,6 @@ private:
 	ALfloat gain; ///@brief The gain of the sound
 	Vec3 position; ///@brief The position of the sound
 	Vec3 velocity; ///@brief The velocity of the sound
-
-	/**
-	* Load a ogg file, if success return 1
-	*/
-	bool LoadOgg(char* fileName, std::vector<char> &buffer, ALenum& format, ALsizei &freq);
 public:
 	/**
 	* Constructor

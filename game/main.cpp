@@ -12,7 +12,6 @@
 #include "../aquarite/scenemanager.h"
 #include "../aquarite/input.h"
 #include "../aquarite/graphics/light.h"
-#include "../aquarite/sound.h"
 
 int main(int argc, char* argv[]) {
 	Core::GetInstance()->Initialize(argv, Point2i(1280,720)); //Initialize Core

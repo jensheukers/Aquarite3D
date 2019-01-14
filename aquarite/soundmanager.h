@@ -9,9 +9,11 @@
 */
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
+#include <vector>
 #include <AL/al.h>
 #include <AL/alc.h>
 #include "math/vec3.h"
+#include "sound.h"
 
 //Listener structure
 struct Listener {
@@ -27,6 +29,8 @@ private:
 	ALCdevice* device; /// @brief The currently used audio device
 	ALCcontext* context; /// @brief The currently active context
 	Listener* listener; /// @brief The currently active listener instance
+
+	std::vector<Sound*> _sounds; /// @brief Vector containing registered sounds
 
 	/**
 	* Returns the instance or creates one if not exists
@@ -53,6 +57,45 @@ public:
 	* Returns the currently active listener
 	*/
 	static Listener* GetListener();
+
+	/**
+	* Adds a new sound to the sounds list
+	*/
+	static void AddSound(Sound* sound);
+
+	/**
+	* Returns a sound pointer, where index matches
+	*/
+	static Sound* GetSound(int index);
+
+	/**
+	* Removes a sound from the sounds list
+	*/
+	static void RemoveSound(int index);
+
+	/**
+	* Plays the sound
+	*/
+	static void PlaySound(int index);
+
+	//Overload
+
+	/**
+	* Plays the sound
+	*/
+	static void PlaySound(Sound* sound);
+
+	/**
+	* Stops playing the sound
+	*/
+	static void StopSound(int index);
+
+	//Overload
+
+	/**
+	* Stops playing the sound
+	*/
+	static void StopSound(Sound* sound);
 
 	/**
 	* Destroys the sound manager

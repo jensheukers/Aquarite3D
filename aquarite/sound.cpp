@@ -13,70 +13,6 @@
 
 #define BUFFER_SIZE 32768 // 32 KB buffers
 
-static inline ALenum to_al_format(short channels, short samples)
-{
-	bool stereo = (channels > 1);
-
-	switch (samples) {
-	case 16:
-		if (stereo)
-			return AL_FORMAT_STEREO16;
-		else
-			return AL_FORMAT_MONO16;
-	case 8:
-		if (stereo)
-			return AL_FORMAT_STEREO8;
-		else
-			return AL_FORMAT_MONO8;
-	default:
-		return -1;
-	}
-}
-
-bool Sound::LoadOgg(char* fileName, std::vector<char> &buffer, ALenum& format, ALsizei &freq) {
-	int endian = 0;
-	int bitStream;
-	long bytes;
-	char array[BUFFER_SIZE];
-	FILE* f;
-
-	//Open for binary reading
-	f = fopen(fileName, "rb");
-
-	if (f == NULL) {
-		return 1;
-	}
-
-	vorbis_info* pInfo;
-	OggVorbis_File oggFile;
-	ov_open(f, &oggFile, NULL, 0); // Open the ogg file
-
-	//Get some information about the ogg file
-	pInfo = ov_info(&oggFile, -1);
-
-	// Check the number of channels... always use 16-bit samples
-	if (pInfo->channels == 1)
-		format = AL_FORMAT_MONO16;
-	else
-		format = AL_FORMAT_STEREO16;
-	// End if
-
-	//Frequency of the sampling rate
-	freq = pInfo->rate;
-
-	//Decode the data
-	do {
-		//Read up to a buffers worth of decoded sound data
-		bytes = ov_read(&oggFile, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
-		//Append to end of buffer
-		buffer.insert(buffer.end(), array, array + bytes);
-	} while (bytes > 0);
-
-	ov_clear(&oggFile);
-
-	return 0;
-}
-
 Sound::Sound() {
 	this->source = nullptr;
 	this->pitch = 1;
@@ -105,11 +41,48 @@ void Sound::LoadAudioSource(std::string path) {
 		return;
 	}
 
-	if (Sound::LoadOgg((char*)aSource->sourcePath.c_str(), aSource->bufferData, aSource->format, aSource->format) != 0) {
+	int endian = 0;
+	int bitStream;
+	long bytes;
+	char array[BUFFER_SIZE];
+	FILE* f;
+
+	//Open for binary reading
+	f = fopen(aSource->sourcePath.c_str(), "rb");
+
+	if (f == NULL) {
 		Debug::Log("Could not load .ogg file", typeid(*this).name());
 		return;
 	}
 
+	vorbis_info* pInfo;
+	OggVorbis_File oggFile;
+	ov_open(f, &oggFile, NULL, 0); // Open the ogg file
+
+								   //Get some information about the ogg file
+	pInfo = ov_info(&oggFile, -1);
+
+	// Check the number of channels... always use 16-bit samples
+	if (pInfo->channels == 1)
+		aSource->format = AL_FORMAT_MONO16;
+	else
+		aSource->format = AL_FORMAT_STEREO16;
+	// End if
+
+	//Frequency of the sampling rate
+	aSource->freq = pInfo->rate;
+
+	//Decode the data
+	do {
+		//Read up to a buffers worth of decoded sound data
+		bytes = ov_read(&oggFile, array, BUFFER_SIZE, endian, 2, 1, &bitStream);
+		//Append to end of buffer
+		aSource->bufferData.insert(aSource->bufferData.end(), array, array + bytes);
+	} while (bytes > 0);
+
+	ov_clear(&oggFile);
+
+	//We have loaded the .ogg file into memory, we can now generate the buffers and buffer the data
 	//Generate buffers
 	alGenBuffers((ALuint)1, &aSource->bufferID);
 
@@ -121,7 +94,7 @@ void Sound::LoadAudioSource(std::string path) {
 	
 	//Buffer the data
 	alBufferData(aSource->bufferID, aSource->format, &aSource->bufferData[0], 
-				 static_cast < ALsizei > (aSource->bufferData.size()), aSource->freq);
+				 aSource->bufferData.size() * sizeof(char), aSource->freq);
 
 	error = alGetError();
 	if (error != AL_NO_ERROR) { // If error

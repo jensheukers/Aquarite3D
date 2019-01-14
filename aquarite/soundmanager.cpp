@@ -44,6 +44,15 @@ void SoundManager::Update() {
 	alListener3f(AL_POSITION, listener->position.x, listener->position.y, listener->position.z);
 	alListener3f(AL_VELOCITY, listener->velocity.x, listener->velocity.y, listener->velocity.z);
 	alListenerfv(AL_ORIENTATION, _listenerOrientation);
+
+	//Play sounds
+	for (size_t i = 0; i < SoundManager::GetInstance()->_sounds.size(); i++) {
+		if (SoundManager::GetInstance()->_sounds[i]->GetAudioSource()->state != AL_STOPPED) {
+			alGetSourcei(SoundManager::GetInstance()->_sounds[i]->GetAudioSource()->sourceID, 
+				AL_SOURCE_STATE, &SoundManager::GetInstance()->_sounds[i]->GetAudioSource()->state);
+		}
+	}
+
 }
 
 void SoundManager::SetListener(Listener* listener) {
@@ -52,6 +61,42 @@ void SoundManager::SetListener(Listener* listener) {
 
 Listener* SoundManager::GetListener() {
 	return SoundManager::GetInstance()->listener;
+}
+
+void SoundManager::AddSound(Sound* sound) {
+	SoundManager::GetInstance()->_sounds.push_back(sound);
+}
+
+Sound* SoundManager::GetSound(int index) {
+	return SoundManager::GetInstance()->_sounds[index];
+}
+
+void SoundManager::RemoveSound(int index) {
+	SoundManager::GetInstance()->_sounds.erase(SoundManager::GetInstance()->_sounds.begin() + index);
+}
+
+void SoundManager::PlaySound(int index) {
+	alSourcePlay(SoundManager::GetSound(index)->GetAudioSource()->sourceID);
+}
+
+void SoundManager::PlaySound(Sound* sound) {
+	for (size_t i = 0; i < SoundManager::GetInstance()->_sounds.size(); i++) {
+		if (SoundManager::GetInstance()->_sounds[i] == sound) {
+			SoundManager::PlaySound(i);
+		}
+	}
+}
+
+void SoundManager::StopSound(int index) {
+	alSourceStop(SoundManager::GetSound(index)->GetAudioSource()->sourceID);
+}
+
+void SoundManager::StopSound(Sound* sound) {
+	for (size_t i = 0; i < SoundManager::GetInstance()->_sounds.size(); i++) {
+		if (SoundManager::GetInstance()->_sounds[i] == sound) {
+			SoundManager::StopSound(i);
+		}
+	}
 }
 
 void SoundManager::Destroy() {
