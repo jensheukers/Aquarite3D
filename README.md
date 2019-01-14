@@ -93,6 +93,11 @@ If you dont want to use a diffuseMap or any other property you can just remove t
 Currently shaders are not supported in meta files, they will be in the near future and shaders can then be loaded by the ResourceManager, for now you can use the ```_aquariteDefaultShader``` shader that is loaded by default. 
 Also more properties like normal maps are to be added.
 
+## Optimization tips
+To improve the performance of Aquarite3D there are a few things you may want to know.
+Aqaurite3D remember's the last drawn object, so it is adviced to child all objects to a entity, because children get drawn before parents. This makes sure there are almost no draw calls to the GPU. 
+Also you could try baking entire model textures and import the model as one single mesh and one single material, This also makes sure there are less draw calls.
+
 ## License
 
 Copyright (C) 2019  Jens Heukers
