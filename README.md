@@ -40,11 +40,11 @@ You can add comments to a meta file using two slashes at the beginning of the <b
 A example Meta file can be found in game/res/example.meta
 
 ## Creating Model Files
-Model files are stored as .amod files in Aquarite3D. These files can contain multiple models, but it is not necessary to store all models in 1 fil.
+Model files are stored as .amod files in Aquarite3D. These files can contain multiple models, but it is not necessary to store all models in 1 file.
 
 To create model files you need to have a mesh and a material, these should be specified in the .meta file
-A model can hold multiple meshes and materials, and holds 2 variables for frustum culling purposes(see below)</br>
-a model should be difined in this order:
+A model can hold multiple meshes and materials, and holds 2 variables for frustum culling purposes(see below).</br>
+a model should be defined in this order:
 ```
 #MODEL
 name=UNIQUE_MODEL_NAME
