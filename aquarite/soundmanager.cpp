@@ -38,9 +38,12 @@ void SoundManager::Init() {
 	Debug::Log("Initialized", typeid(*_instance).name());
 }
 
-void SoundManager::Update(Vec3 head, Vec3 up) {
+void SoundManager::Update(Vec3 position, Vec3 head, Vec3 up) {
 	Listener* listener = SoundManager::GetInstance()->listener;
 	if (listener == nullptr) return;
+	listener->head = head;
+	listener->up = up;
+	listener->position = position;
 	ALfloat _listenerOrientation[]{ listener->head.x, listener->head.y, listener->head.z, 
 									listener->up.x, listener->up.y, listener->up.z };
 	alListener3f(AL_POSITION, listener->position.x, listener->position.y, listener->position.z);
@@ -55,14 +58,6 @@ void SoundManager::Update(Vec3 head, Vec3 up) {
 		}
 	}
 
-}
-
-void SoundManager::SetListenerPosition(Vec3 pos) {
-	SoundManager::GetInstance()->listener->position = pos;
-}
-
-Vec3& SoundManager::GetListenerPosition() {
-	return SoundManager::GetInstance()->listener->position;
 }
 
 void SoundManager::AddSound(Sound* sound) {

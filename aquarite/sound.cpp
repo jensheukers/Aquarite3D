@@ -13,10 +13,19 @@
 
 #define BUFFER_SIZE 32768 // 32 KB buffers
 
+#define DEFAULT_DISTANCE_MODEL AL_LINEAR_DISTANCE_CLAMPED
+#define DEFAULT_ROLLOF_FACTOR 3.3f
+#define DEFAULT_PITCH 1.0f
+#define DEFAULT_GAIN 1.0f
+#define DEFAULT_MAX_DIST 50.0f
+#define DEFAULT_MAX_REF_DIST 5.0f
+
 Sound::Sound() {
 	this->source = nullptr;
 	this->pitch = 1;
 	this->gain = 1;
+	this->max_distance = 10.0f; // default is 10.0f
+	this->ref_distance = 10.0f; // default is 10.0f;
 }
 
 Sound::~Sound() {
@@ -106,13 +115,31 @@ void Sound::LoadAudioSource(std::string path) {
 	this->source = aSource; // Set the source
 
 	//Set default values
-	this->SetPitch(1.0f);
-	this->SetGain(1.0f);
+	alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	this->SetRollofFactor(DEFAULT_ROLLOF_FACTOR);
+	this->SetPitch(DEFAULT_PITCH);
+	this->SetGain(DEFAULT_GAIN);
+	this->SetMaxDistance(DEFAULT_MAX_DIST); // default is 50.0f
+	this->SetMaxReferenceDistance(DEFAULT_MAX_REF_DIST); // default is 1.0f;
 	this->SetPosition(Vec3(0,0,0));
 	this->SetVelocity(Vec3(0,0,0));
 	this->Loop(false);
 
 	Debug::Log("Loaded audio source : " + path, typeid(*this).name());
+}
+
+void Sound::SetDistanceModel(ALfloat model) {
+	if (this->source == nullptr) return;
+
+	alDistanceModel(model);
+	this->distanceModel = model;
+}
+
+void Sound::SetRollofFactor(float factor) {
+	if (this->source == nullptr) return;
+
+	alSourcef(this->source->sourceID, AL_ROLLOFF_FACTOR, (ALfloat)factor);
+	this->rollof_factor = (ALfloat)factor;
 }
 
 void Sound::SetPitch(float pitch) {
@@ -135,6 +162,28 @@ void Sound::SetGain(float gain) {
 
 ALfloat Sound::GetGain() {
 	return this->gain;
+}
+
+void Sound::SetMaxDistance(float distance) {
+	if (this->source == nullptr) return;
+
+	alSourcef(this->source->sourceID, AL_MAX_DISTANCE, (ALfloat)distance);
+	this->max_distance = (ALfloat)distance;
+}
+
+ALfloat Sound::GetMaxDistance() {
+	return this->max_distance;
+}
+
+void Sound::SetMaxReferenceDistance(float distance) {
+	if (this->source == nullptr) return;
+
+	alSourcef(this->source->sourceID, AL_REFERENCE_DISTANCE, (ALfloat)distance);
+	this->ref_distance = (ALfloat)distance;
+}
+
+ALfloat Sound::GetMaxReferenceDistance() {
+	return this->ref_distance;
 }
 
 void Sound::SetPosition(Vec3 pos) {

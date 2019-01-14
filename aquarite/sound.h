@@ -31,10 +31,16 @@ class Sound {
 private:
 	ALuint state; /// @brief The current source state
 	AudioSource* source; /// @brief the current audio source
-	ALfloat pitch; ///@brief The pitch of the sound
-	ALfloat gain; ///@brief The gain of the sound
 	Vec3 position; ///@brief The position of the sound
 	Vec3 velocity; ///@brief The velocity of the sound
+
+	//Properties
+	ALfloat distanceModel; /// @brief The distance model
+	ALfloat rollof_factor; /// @brief The rolloff factor of the sound
+	ALfloat pitch; ///@brief The pitch of the sound
+	ALfloat gain; ///@brief The gain of the sound
+	ALfloat max_distance; ///@brief The max distance for the sound to be heard, default is 10.0f
+	ALfloat ref_distance; /// @brief The reference distance (Until this distance sound volume will stay 1), default is 5.0f
 public:
 	/**
 	* Constructor
@@ -50,6 +56,16 @@ public:
 	* Loads a AudioSource and sets source pointer to it
 	*/
 	void LoadAudioSource(std::string path);
+
+	/**
+	* Set the distance model
+	*/
+	void SetDistanceModel(ALfloat model);
+
+	/**
+	* Set the rollof factor
+	*/
+	void SetRollofFactor(float factor);
 
 	/**
 	* Set the pitch of the sound
@@ -70,6 +86,26 @@ public:
 	* Returns the gain of the sound
 	*/
 	ALfloat GetGain();
+
+	/**
+	* Set the max distance of the sound
+	*/
+	void SetMaxDistance(float distance);
+
+	/**
+	* Returns the max distance of the sound
+	*/
+	ALfloat GetMaxDistance();
+
+	/**
+	* Set the max reference distance of the sound
+	*/
+	void SetMaxReferenceDistance(float distance);
+
+	/**
+	* Returns the max reference distance of the sound
+	*/
+	ALfloat GetMaxReferenceDistance();
 
 	/**
 	* Sets the position of the sound

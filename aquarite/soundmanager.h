@@ -48,17 +48,7 @@ public:
 	/**
 	* Update gets called each frame by core, it handles things like listener's position ect.
 	*/
-	static void Update(Vec3 head, Vec3 up);
-
-	/**
-	* Sets the listeners position
-	*/
-	static void SetListenerPosition(Vec3 pos);
-
-	/**
-	* Returns the listeners position
-	*/
-	static Vec3& GetListenerPosition();
+	static void Update(Vec3 position, Vec3 head, Vec3 up);
 
 	/**
 	* Adds a new sound to the sounds list

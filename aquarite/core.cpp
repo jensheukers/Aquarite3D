@@ -113,7 +113,9 @@ void Core::HandleUpdates() {
 		// Update all entities and their children
 		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
 			//Update SoundManager
-			SoundManager::Update(Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetTarget()), Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetUp()));
+			SoundManager::Update(Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos()), 
+								 Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetTarget()), 
+								 Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetUp()));
 
 			SceneManager::GetActiveScene()->GetActiveCamera()->UpdateFront();
 			//Update renderer
