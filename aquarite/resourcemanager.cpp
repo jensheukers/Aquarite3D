@@ -3,7 +3,7 @@
 *
 *	Description: Source file for ResourceManager singleton class.
 *
-*	Version: 9/1/2019
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -364,6 +364,15 @@ void ResourceManager::LoadMeta(std::string offset) {
 
 						if (segments[0] == "ignoreFrustum") {
 							currentModel->IgnoreFrustum(std::stoi(segments[1]));
+						}
+
+						if (segments[0] == "drawMode") {
+							if (segments[1] == "Late") {
+								currentModel->drawMode = DrawMode::Late;
+							}
+							else {
+								currentModel->drawMode = DrawMode::Normal;
+							}
 						}
 					}
 					file.close();

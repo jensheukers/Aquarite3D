@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Model class.
 *
-*	Version: 13/1/2019
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -13,6 +13,7 @@ Model::Model() {
 	this->name = "Unnamed Model";
 	this->sphereRadius = 1.0f; // Default sphere radius
 	this->ignoreFrustum = false; // we dont want to ignore frustum by default
+	this->drawMode = DrawMode::Normal; // Normal draw mode
 }
 
 Material* Model::GetMaterial(int index) {

@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Entity class, also contains definitions for Sprite (basicly a quad)
 *
-*	Version: 28/12/2018
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -51,7 +51,7 @@ protected:
 	/**
 	* Protected method Render, this due to we not wanting the end user to call this method.
 	*/
-	void Render(Renderer* renderer, Camera* camera);
+	void Render(Renderer* renderer, Camera* camera, DrawMode mode);
 public:
 	Vec3 position; /// @brief Position Vector3, position is relative to the parent's position
 

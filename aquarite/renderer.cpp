@@ -51,6 +51,8 @@ int Renderer::Initialize(std::string windowTitle, int width, int height) {
 	}
 	
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glCullFace(GL_BACK);
 
 	glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);

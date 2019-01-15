@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Scene class, Scene extends from Entity
 *
-*	Version: 27/12/2018
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -38,7 +38,7 @@ public:
 	/**
 	* Renders all scene children
 	*/
-	void RenderSceneChildren(Renderer* renderer, Camera* camera);
+	void RenderSceneChildren(Renderer* renderer, Camera* camera, DrawMode mode);
 
 	/**
 	* Returns the currently active camera

@@ -16,3 +16,13 @@ color=1.0f,1.0f,1.0f
 diffuseColor=1.0f,1.0f,1.0f
 ambientColor=1.0f,1.0f,1.0f
 specular=0.5f,0.5f,0.5f
+
+#MAT
+name=windowMat
+diffuseMap=Window
+shader=_aquariteDefaultShader
+shininess=32.0f
+color=1.0f,1.0f,1.0f
+diffuseColor=1.0f,1.0f,1.0f
+ambientColor=1.0f,1.0f,1.0f
+specular=0.5f,0.5f,0.5f

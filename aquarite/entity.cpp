@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Entity class
 *
-*	Version: 28/12/2018
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -37,11 +37,12 @@ void Entity::UpdateChildren() {
 	this->Update(); // Call local update function
 }
 
-void Entity::Render(Renderer* renderer, Camera* camera) {
+void Entity::Render(Renderer* renderer, Camera* camera, DrawMode mode) {
 	if (this->model != nullptr) {
+		if (mode != this->model->drawMode) return;
 		switch (this->renderMode) {
 		case RenderMode::WorldSpace:
-			renderer->DrawModel(camera, model, this->globalPosition, this->globalRotation, localScale);
+			renderer->DrawModel(camera, model, GetPositionGlobal(), GetRotationGlobal(), localScale);
 			break;
 		case RenderMode::ScreenSpace:
 			renderer->DrawSprite(model, this->globalPosition, this->globalRotation, localScale);
@@ -50,7 +51,7 @@ void Entity::Render(Renderer* renderer, Camera* camera) {
 	}
 
 	for (unsigned i = 0; i < children.size(); i++) {
-		children[i]->Render(renderer, camera);
+		children[i]->Render(renderer, camera, mode);
 	}
 }
 

@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Scene class
 *
-*	Version: 27/12/2018
+*	Version: 15/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -24,8 +24,8 @@ void Scene::UpdateSceneChildren() {
 	this->Update(); // call Update function
 }
 
-void Scene::RenderSceneChildren(Renderer* renderer, Camera* camera) {
-	this->Render(renderer, camera); // Render all the scene Children
+void Scene::RenderSceneChildren(Renderer* renderer, Camera* camera, DrawMode mode) {
+	this->Render(renderer, camera, mode); // Render all the scene Children
 }
 
 Camera* Scene::GetActiveCamera() {
@@ -136,7 +136,7 @@ void Scene::LoadSceneData(std::string offset) {
 				}
 
 				if (segments[0] == "rotation") {
-					entityptr->Rotate(Vec3(std::stof(commas[0]), std::stof(commas[1]), std::stof(commas[2])));
+					entityptr->SetRotation(Vec3(std::stof(commas[0]), std::stof(commas[1]), std::stof(commas[2])));
 				}
 
 				if (segments[0] == "scale") {

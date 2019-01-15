@@ -12,6 +12,7 @@ version=0.1f
 
 #TEXTURES
 BrickWall=textures/brickwall.tga
+Window=textures/window.tga
 
 #MESHES
 Cube=meshes/cube.obj

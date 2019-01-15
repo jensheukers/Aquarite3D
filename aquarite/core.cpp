@@ -131,7 +131,8 @@ void Core::HandleUpdates() {
 			//Render children
 			for (unsigned i = 0; i < SceneManager::GetActiveScene()->GetChildren().size(); i++) {
 				SceneManager::GetActiveScene()->UpdateSceneChildren();
-				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera());
+				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera(), DrawMode::Normal); // Normal draw
+				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera(), DrawMode::Late); // Late draw
 			}
 		}
 	}
