@@ -1,7 +1,7 @@
 /**
-*	Filename: renderer.h
+*	Filename: renderer.cpp
 *
-*	Description: Header file for renderer class
+*	Description: Source file for renderer class
 *
 *	Version: 13/1/2019
 *
@@ -11,80 +11,101 @@
 #define RENDERER_H
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <vector>
-#include "camera.h"
-#include "mesh.h"
 #include "math/vec3.h"
+#include "math/pointx.h"
 
-class Model; // Forward declaration
-
-class Light; // Forward declaration
+//Forward declarations
+class Entity;
+class Camera;
+class Model;
+class Light;
+class Texture;
 
 class Renderer {
 private:
-	GLFWwindow* _window; /// @brief The GLFW window context
-	int screenWidth, screenHeight; /// @brief The screen width and Height
-	std::vector<Light*> _lights; /// @brief Lights vector
-	const size_t MAX_LIGHTS = 25; /// @brief The maximum numbers of lights allowed to be drawn
-	glm::mat4 view; /// @Brief The view matrix
-	glm::mat4 projection; /// @Brief The projection matrix
-	Model* lastModel; /// @Brief the last computed model, if current model would be same as the last, we can skip binding ect.
+	GLFWwindow * window; /// @brief The window of the renderer
+	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
+	std::vector<Light*> lights; /// @brief Vector containing lights.
+	glm::mat4 view, projection; /// @brief The view and projection matrixes
+
+	/**
+	* Returns true if model is indeed inside our frustum
+	*/
+	bool InFrustum(Camera* camera, Model* model, Vec3 position);
+
+	/**
+	* Handles the lighting in the shader, i defines the currently rendered material/mesh
+	*/
+	void HandleShaderLighting(Model* model, int i);
 public:
 	/**
-	* Initialize the Renderer, Initialize GLFW & GLEW and create a window context.
+	* Sets up window context, sets up OpenGL properties
 	*/
-	int Initialize(std::string windowTitle, int width, int height);
-
+	int Initialize(const char* windowTitle, int width, int height);
 
 	/**
-	* Sets up view and projection matrix for this frame
+	* Handles some matrix translations such as camera fov ect, method is called from core
 	*/
-	void Update(Camera* camera, float fov);
+	void HandleTranslations(Camera* camera, float fov);
 
 	/**
-	* Renders a sprite on the screen, uses a different shader than mesh rendering 
+	* Enables/Disables the cursor
 	*/
-	void DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+	void EnableCursor(bool state);
 
 	/**
-	* Renders a mesh on the screen, If shader parameter is null, default shader will be used
-	*/
-	void DrawModel(Camera* camera, Model* model,Vec3 position, Vec3 rotation, Vec3 scale);
-
-	/**
-	* Adds a light to the renderer's lights list, also edits the shaderfile, if type is point
-	*/
-	void AddLight(Light* light);
-
-	/**
-	* Removes a light from from the lights list.
-	*/
-	void RemoveLight(Light* light);
-
-	/**
-	* Swap the buffers.
+	* Swaps the buffers
 	*/
 	void SwapBuffers();
 
 	/**
-	* Poll all the GLFW events
+	* Poll glfw events
 	*/
 	void PollEvents();
 
 	/**
-	* Clear the OpenGL color buffer
+	* Clears the screen to be ready for next frame, also clears the drawList
 	*/
 	void Clear();
 
 	/**
+	* Adds a light to the lights vector
+	*/
+	void AddLight(Light* light);
+
+	/**
+	* Removes a light from the lights vector
+	*/
+	void RemoveLight(Light* light);
+
+
+	/**
+	* Registers a entity to the drawList
+	*/
+	void RegisterEntity(Entity* entity);
+
+	/**
+	* Prepares and renders the entire drawList
+	*/
+	void RenderDrawList(Camera* camera);
+
+	/**
+	* Renders a model to the screen
+	*/
+	void DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+
+	/**
+	* Draws a 2d sprite on the screen
+	*/
+	void DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+	
+	/**
 	* Returns the GLFW Window
 	*/
 	GLFWwindow* GetWindow();
-
-	/**
-	* Sets the cursor mode
-	*/
-	void EnableCursor(bool state);
 
 	/**
 	* Destructor

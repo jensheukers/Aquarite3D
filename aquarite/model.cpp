@@ -13,7 +13,6 @@ Model::Model() {
 	this->name = "Unnamed Model";
 	this->sphereRadius = 1.0f; // Default sphere radius
 	this->ignoreFrustum = false; // we dont want to ignore frustum by default
-	this->drawMode = DrawMode::Normal; // Normal draw mode
 }
 
 Material* Model::GetMaterial(int index) {

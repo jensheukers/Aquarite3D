@@ -13,11 +13,6 @@
 #include "graphics\material.h"
 #include "mesh.h"
 
-enum DrawMode {
-	Normal = 0,
-	Late
-};
-
 class Model {
 private:
 	std::vector<Material*> materials; /// @brief List of materials used on this model, material index should match mesh index
@@ -26,7 +21,6 @@ private:
 	float sphereRadius; /// @brief The radius of the sphere of the model, for frustum culling
 	bool ignoreFrustum; /// @brief If true frustum culling will be ignored for this model
 public:
-	DrawMode drawMode; /// @brief specifies if object is to be drawn normally or late
 
 	/**
 	* Constructor

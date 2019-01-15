@@ -37,12 +37,11 @@ void Entity::UpdateChildren() {
 	this->Update(); // Call local update function
 }
 
-void Entity::Render(Renderer* renderer, Camera* camera, DrawMode mode) {
+void Entity::Render(Renderer* renderer, Camera* camera) {
 	if (this->model != nullptr) {
-		if (mode != this->model->drawMode) return;
 		switch (this->renderMode) {
 		case RenderMode::WorldSpace:
-			renderer->DrawModel(camera, model, GetPositionGlobal(), GetRotationGlobal(), localScale);
+			renderer->RegisterEntity(this);
 			break;
 		case RenderMode::ScreenSpace:
 			renderer->DrawSprite(model, this->globalPosition, this->globalRotation, localScale);
@@ -51,7 +50,7 @@ void Entity::Render(Renderer* renderer, Camera* camera, DrawMode mode) {
 	}
 
 	for (unsigned i = 0; i < children.size(); i++) {
-		children[i]->Render(renderer, camera, mode);
+		children[i]->Render(renderer, camera);
 	}
 }
 
@@ -272,8 +271,6 @@ void Sprite::Create() {
 	};
 
 	Model* model = new Model();
-
-	
 	Material* mat = new Material();
 	mat->SetShader(ResourceManager::GetShader("_aquariteDefaultSpriteShader"));
 	model->AddMaterial(mat);

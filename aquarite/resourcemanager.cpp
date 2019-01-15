@@ -365,15 +365,6 @@ void ResourceManager::LoadMeta(std::string offset) {
 						if (segments[0] == "ignoreFrustum") {
 							currentModel->IgnoreFrustum(std::stoi(segments[1]));
 						}
-
-						if (segments[0] == "drawMode") {
-							if (segments[1] == "Late") {
-								currentModel->drawMode = DrawMode::Late;
-							}
-							else {
-								currentModel->drawMode = DrawMode::Normal;
-							}
-						}
 					}
 					file.close();
 				}

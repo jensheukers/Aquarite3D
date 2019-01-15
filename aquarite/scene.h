@@ -38,7 +38,7 @@ public:
 	/**
 	* Renders all scene children
 	*/
-	void RenderSceneChildren(Renderer* renderer, Camera* camera, DrawMode mode);
+	void RenderSceneChildren(Renderer* renderer, Camera* camera);
 
 	/**
 	* Returns the currently active camera

@@ -51,7 +51,7 @@ protected:
 	/**
 	* Protected method Render, this due to we not wanting the end user to call this method.
 	*/
-	void Render(Renderer* renderer, Camera* camera, DrawMode mode);
+	void Render(Renderer* renderer, Camera* camera);
 public:
 	Vec3 position; /// @brief Position Vector3, position is relative to the parent's position
 

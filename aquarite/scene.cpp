@@ -24,8 +24,8 @@ void Scene::UpdateSceneChildren() {
 	this->Update(); // call Update function
 }
 
-void Scene::RenderSceneChildren(Renderer* renderer, Camera* camera, DrawMode mode) {
-	this->Render(renderer, camera, mode); // Render all the scene Children
+void Scene::RenderSceneChildren(Renderer* renderer, Camera* camera) {
+	this->Render(renderer, camera); // Render all the scene Children
 }
 
 Camera* Scene::GetActiveCamera() {

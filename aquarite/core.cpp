@@ -119,7 +119,7 @@ void Core::HandleUpdates() {
 
 			SceneManager::GetActiveScene()->GetActiveCamera()->UpdateFront();
 			//Update renderer
-			renderer->Update(SceneManager::GetActiveScene()->GetActiveCamera(), _fov);
+			renderer->HandleTranslations(SceneManager::GetActiveScene()->GetActiveCamera(), _fov);
 
 			//Update frustum
 			Vec3 cameraPos = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos());
@@ -131,9 +131,10 @@ void Core::HandleUpdates() {
 			//Render children
 			for (unsigned i = 0; i < SceneManager::GetActiveScene()->GetChildren().size(); i++) {
 				SceneManager::GetActiveScene()->UpdateSceneChildren();
-				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera(), DrawMode::Normal); // Normal draw
-				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera(), DrawMode::Late); // Late draw
+				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera()); // Normal draw
 			}
+
+			renderer->RenderDrawList(SceneManager::GetActiveScene()->GetActiveCamera());
 		}
 	}
 
