@@ -224,3 +224,7 @@ void Sound::Loop(bool state) {
 AudioSource* Sound::GetAudioSource() {
 	return this->source;
 }
+
+void Sound::SetAudioSource(AudioSource* source) {
+	this->source = source;
+}

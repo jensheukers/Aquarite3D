@@ -136,6 +136,11 @@ public:
 	* Returns the audio source, if not yet loaded returns nullptr
 	*/
 	AudioSource* GetAudioSource();
+
+	/**
+	* Sets the active audio source
+	*/
+	void SetAudioSource(AudioSource* source);
 };
 
 
