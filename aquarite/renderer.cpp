@@ -294,23 +294,19 @@ void Renderer::Render(Camera* camera) {
 		if (!drawList[i]->GetModel()->IgnoreFrustumState()) {
 			if (!InFrustum(camera, drawList[i]->GetModel(), drawList[i]->GetPositionGlobal())) continue;
 		}
-
 		renderEntities.push_back(drawList[i]);
 	}
 
 	// We want to draw from back to front, so we have to do some sorting
 	//We can use a map for this and then draw those values to the screen
 	std::map<float, Entity*> sorted;
-
 	for (i = 0; i < renderEntities.size(); i++) { //Sort
 		float distance = Vec3::Distance(Vec3::ToVec3(camera->GetPos()), renderEntities[i]->position); // Get distance
 		sorted[distance] = renderEntities[i]; // Add to map
 	}
 
-	//Bind framebuffer
+	//Bind framebuffer and enable depth test
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->GetFBO());
-
-	//Enable depth test
 	glEnable(GL_DEPTH_TEST);
 
 	//Render
@@ -320,14 +316,15 @@ void Renderer::Render(Camera* camera) {
 
 	//Unbind framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
 
 	//Disable depth testing (For drawing quad to screen)
 	glUseProgram(frameBuffer->GetShader()->GetShaderProgram()); // Bind framebuffer shader program
-	glBindVertexArray(screenVAO);
-	glDisable(GL_DEPTH_TEST);
-	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject());
+	glBindVertexArray(screenVAO); // Bind Vertex Array Object
+
+	glDisable(GL_DEPTH_TEST); // Disable depth testing
+
+	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
 	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 }
 
