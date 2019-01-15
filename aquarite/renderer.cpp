@@ -9,6 +9,7 @@
 */
 #include <glm/gtc/type_ptr.hpp>
 #include <map>
+#include "resourcemanager.h"
 #include "renderer.h"
 #include "core.h"
 #include "debug.h"
@@ -17,6 +18,28 @@
 #include "graphics/light.h"
 
 #define MAX_LIGHTS 25
+
+void GenerateScreenQuadBuffers(unsigned int &vao, unsigned int &vbo) {
+	float quadVertices[] = {
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		1.0f, -1.0f,  1.0f, 0.0f,
+		1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+}
 
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -91,6 +114,63 @@ void Renderer::HandleShaderLighting(Model* model, int i) {
 	}
 }
 
+void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {
+	static Model* lastModel = nullptr; // Note static!, we can only declare once so we can use this property over the course of the program
+	bool sameModelAsLastDraw = false;
+
+	if (lastModel == model && model->GetMeshesCount() == 1) sameModelAsLastDraw = true; // Last model was same model, we dont have to bind VAO & Shader program again!
+
+																						//Check if there are as equal meshes as there are materials
+	if (model->GetMeshesCount() != model->GetMaterialCount()) {
+		if (model->GetMeshesCount() > model->GetMaterialCount())
+			Debug::Log("Error: Model " + model->GetName() + " has more meshes than materials", typeid(*this).name());
+		else
+			Debug::Log("Error: Model " + model->GetName() + " has more materials than meshes", typeid(*this).name());
+		return; // Returns if not equal
+	}
+
+	for (size_t i = 0; i < model->GetMeshesCount(); i++) { // For every mesh on the model
+		if (!sameModelAsLastDraw) { // If model is different we have to bind some stuff
+			glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram()); // Use shader program
+
+			if (model->GetMesh(i)->GetVAO() == NULL) return; // If the Vertex Array Object equals NULL return
+
+			glBindVertexArray(model->GetMesh(i)->GetVAO());
+			if (model->GetMaterial(i)->GetDiffuse()) {
+				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", true); // Set hasTexture to true
+				glBindTexture(GL_TEXTURE_2D, model->GetMaterial(i)->GetDiffuse()->GetGLTexture());
+			}
+			else {
+				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", false); // Set hasTexture to true
+			}
+		}
+
+		//Handle shader lighting
+		HandleShaderLighting(model, i);
+
+		//Model transform
+		glm::mat4 modelTransform(1);
+		modelTransform = glm::translate(modelTransform, glm::vec3(position.x, position.y, position.z)); // position
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.x), glm::vec3(1, 0, 0)); // Rotation
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.y), glm::vec3(0, 1, 0)); // Rotation
+		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.z), glm::vec3(0, 0, 1)); // Rotation
+		modelTransform = glm::scale(modelTransform, glm::vec3(scale.x, scale.y, scale.z)); // scale
+
+																						   //Handle view position and matrixes
+		model->GetMaterial(i)->GetShader()->SetVec3("viewPos", camera->GetPos());
+		GLint modelLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "model");
+		GLint viewLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "view");
+		GLint projLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "projection");
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelTransform));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		// Draw
+		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh(i)->GetVerticesCount());
+	}
+}
+
 int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//Initialize GLFW
 	if (!glfwInit()) {
@@ -119,16 +199,21 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//Set framebuffer callback
 	glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);
 
-	//Enable depth test / blend / set blend func
-	glEnable(GL_DEPTH_TEST);
+	//Enable blend / set blend func
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//Cull back faces
-	glCullFace(GL_BACK);
-
 	//Set clear color to black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Create framebuffer instance and set shader
+	frameBuffer = new FrameBuffer(Core::GetResolution());
+	frameBuffer->SetShader(ResourceManager::GetShader("_aquariteDefaultFrameBufferShader"));
+	frameBuffer->GetShader()->SetInt("screenTexture", 0);
+
+	//Generate screen quad vbo
+	GenerateScreenQuadBuffers(screenVAO, screenVBO);
+
 	return 0; // Return 0 (No errors)
 }
 
@@ -171,6 +256,10 @@ void Renderer::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color/depth buffer
 	glLoadIdentity(); // reset matrix
 
+	//Also clear the framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->GetFBO());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color/depth buffer
+
 	glBindVertexArray(0); // Unbind
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind current texture unit
 
@@ -197,7 +286,7 @@ void Renderer::RegisterEntity(Entity* entity) {
 	drawList.push_back(entity); // Add pointer
 }
 
-void Renderer::RenderDrawList(Camera* camera) {
+void Renderer::Render(Camera* camera) {
 	std::vector<Entity*> renderEntities; // vector will be filled with entities that are ready for draw
 	size_t i;
 	for (i = 0; i < drawList.size(); i++) { // Do checks
@@ -218,66 +307,28 @@ void Renderer::RenderDrawList(Camera* camera) {
 		sorted[distance] = renderEntities[i]; // Add to map
 	}
 
+	//Bind framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->GetFBO());
+
+	//Enable depth test
+	glEnable(GL_DEPTH_TEST);
+
+	//Render
 	for (std::map<float, Entity*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) { //Finally draw to screen
 		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
 	}
-}
 
-void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale) {
-	static Model* lastModel = nullptr; // Note static!, we can only declare once so we can use this property over the course of the program
-	bool sameModelAsLastDraw = false;
+	//Unbind framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	if (lastModel == model && model->GetMeshesCount() == 1) sameModelAsLastDraw = true; // Last model was same model, we dont have to bind VAO & Shader program again!
+	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
 
-	//Check if there are as equal meshes as there are materials
-	if (model->GetMeshesCount() != model->GetMaterialCount()) {
-		if(model->GetMeshesCount() > model->GetMaterialCount())
-			Debug::Log("Error: Model " + model->GetName() + " has more meshes than materials", typeid(*this).name());
-		else 
-			Debug::Log("Error: Model " + model->GetName() + " has more materials than meshes", typeid(*this).name());
-		return; // Returns if not equal
-	}
-
-	for (size_t i = 0; i < model->GetMeshesCount(); i++) { // For every mesh on the model
-		if (!sameModelAsLastDraw) { // If model is different we have to bind some stuff
-			glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram()); // Use shader program
-
-			if (model->GetMesh(i)->GetVAO() == NULL) return; // If the Vertex Array Object equals NULL return
-
-			glBindVertexArray(model->GetMesh(i)->GetVAO());
-			if (model->GetMaterial(i)->GetDiffuse()) {
-				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", true); // Set hasTexture to true
-				glBindTexture(GL_TEXTURE_2D, model->GetMaterial(i)->GetDiffuse()->GetGLTexture());
-			}
-			else {
-				model->GetMaterial(i)->GetShader()->SetBool("hasTexture", false); // Set hasTexture to true
-			}
-		}
-
-		//Handle shader lighting
-		HandleShaderLighting(model, i);
-
-		//Model transform
-		glm::mat4 modelTransform(1);
-		modelTransform = glm::translate(modelTransform, glm::vec3(position.x, position.y, position.z)); // position
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.x), glm::vec3(1, 0, 0)); // Rotation
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.y), glm::vec3(0, 1, 0)); // Rotation
-		modelTransform = glm::rotate(modelTransform, Vec3::DegToRad(rotation.z), glm::vec3(0, 0, 1)); // Rotation
-		modelTransform = glm::scale(modelTransform, glm::vec3(scale.x, scale.y, scale.z)); // scale
-
-		//Handle view position and matrixes
-		model->GetMaterial(i)->GetShader()->SetVec3("viewPos", camera->GetPos());
-		GLint modelLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "model");
-		GLint viewLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "view");
-		GLint projLoc = glGetUniformLocation(model->GetMaterial(i)->GetShader()->GetShaderProgram(), "projection");
-
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelTransform));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		// Draw
-		glDrawArrays(GL_TRIANGLES, 0, model->GetMesh(i)->GetVerticesCount());
-	}
+	//Disable depth testing (For drawing quad to screen)
+	glUseProgram(frameBuffer->GetShader()->GetShaderProgram()); // Bind framebuffer shader program
+	glBindVertexArray(screenVAO);
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject());
+	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 }
 
 void Renderer::DrawSprite(Model* texture, Vec3 position, Vec3 rotation, Vec3 scale) {
@@ -286,6 +337,10 @@ void Renderer::DrawSprite(Model* texture, Vec3 position, Vec3 rotation, Vec3 sca
 
 GLFWwindow* Renderer::GetWindow() {
 	return this->window;
+}
+
+FrameBuffer* Renderer::GetFrameBuffer() {
+	return this->frameBuffer;
 }
 
 Renderer::~Renderer() {

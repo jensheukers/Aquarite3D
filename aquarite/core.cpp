@@ -134,7 +134,7 @@ void Core::HandleUpdates() {
 				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera()); // Normal draw
 			}
 
-			renderer->RenderDrawList(SceneManager::GetActiveScene()->GetActiveCamera());
+			renderer->Render(SceneManager::GetActiveScene()->GetActiveCamera());
 		}
 	}
 

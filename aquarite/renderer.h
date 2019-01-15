@@ -16,6 +16,7 @@
 #include <vector>
 #include "math/vec3.h"
 #include "math/pointx.h"
+#include "graphics/framebuffer.h"
 
 //Forward declarations
 class Entity;
@@ -30,6 +31,10 @@ private:
 	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
 	std::vector<Light*> lights; /// @brief Vector containing lights.
 	glm::mat4 view, projection; /// @brief The view and projection matrixes
+	FrameBuffer* frameBuffer; /// @brief The framebuffer instance of the renderer
+
+	//We need to create a screen vbo so we can render our scene to a quad, for post processing purposes
+	unsigned int screenVAO, screenVBO; /// @brief Screen Vertex Array Object, Screen Vertex Buffer Object
 
 	/**
 	* Returns true if model is indeed inside our frustum
@@ -40,6 +45,11 @@ private:
 	* Handles the lighting in the shader, i defines the currently rendered material/mesh
 	*/
 	void HandleShaderLighting(Model* model, int i);
+
+	/**
+	* Renders a model to the screen
+	*/
+	void DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
 public:
 	/**
 	* Sets up window context, sets up OpenGL properties
@@ -90,12 +100,7 @@ public:
 	/**
 	* Prepares and renders the entire drawList
 	*/
-	void RenderDrawList(Camera* camera);
-
-	/**
-	* Renders a model to the screen
-	*/
-	void DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+	void Render(Camera* camera);
 
 	/**
 	* Draws a 2d sprite on the screen
@@ -106,6 +111,11 @@ public:
 	* Returns the GLFW Window
 	*/
 	GLFWwindow* GetWindow();
+
+	/**
+	* Returns the framebuffer
+	*/
+	FrameBuffer* GetFrameBuffer();
 
 	/**
 	* Destructor
