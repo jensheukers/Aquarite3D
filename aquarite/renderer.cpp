@@ -8,6 +8,7 @@
 *	© 2018, Jens Heukers
 */
 #include <glm/gtc/type_ptr.hpp>
+#include <map>
 #include "renderer.h"
 #include "core.h"
 #include "debug.h"
@@ -201,12 +202,24 @@ void Renderer::RenderDrawList(Camera* camera) {
 	size_t i;
 	for (i = 0; i < drawList.size(); i++) { // Do checks
 		//We do a frustum culling check and filter out all objects that are not in sight.
-		if (!InFrustum(camera, drawList[i]->GetModel(), drawList[i]->GetPositionGlobal())) continue;
+		if (!drawList[i]->GetModel()->IgnoreFrustumState()) {
+			if (!InFrustum(camera, drawList[i]->GetModel(), drawList[i]->GetPositionGlobal())) continue;
+		}
+
 		renderEntities.push_back(drawList[i]);
 	}
 
-	for (i = 0; i < renderEntities.size(); i++) { // Draw everything
-		DrawModel(camera, renderEntities[i]->GetModel(), renderEntities[i]->GetPositionGlobal(), renderEntities[i]->GetRotationGlobal(), renderEntities[i]->GetScale());
+	// We want to draw from back to front, so we have to do some sorting
+	//We can use a map for this and then draw those values to the screen
+	std::map<float, Entity*> sorted;
+
+	for (i = 0; i < renderEntities.size(); i++) { //Sort
+		float distance = Vec3::Distance(Vec3::ToVec3(camera->GetPos()), renderEntities[i]->position); // Get distance
+		sorted[distance] = renderEntities[i]; // Add to map
+	}
+
+	for (std::map<float, Entity*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) { //Finally draw to screen
+		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
 	}
 }
 
