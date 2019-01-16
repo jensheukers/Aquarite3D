@@ -21,6 +21,7 @@
 
 //Forward declarations
 class Entity;
+class Sprite;
 class Camera;
 class Model;
 class Light;
@@ -30,6 +31,7 @@ class Renderer {
 private:
 	GLFWwindow * window; /// @brief The window of the renderer
 	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
+	std::vector<Sprite*> spriteList; /// @brief The vector of sprites to be drawn, will reset each frame
 	std::vector<Light*> lights; /// @brief Vector containing lights.
 	glm::mat4 view, projection; /// @brief The view and projection matrixes
 
@@ -54,6 +56,11 @@ private:
 	* Renders a model to the screen
 	*/
 	void DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+
+	/**
+	* Draws a 2d sprite on the screen
+	*/
+	void DrawSprite(Model* model, Vec3 position, Vec3 scale);
 
 	/**
 	* Renders the skybox
@@ -107,15 +114,15 @@ public:
 	void RegisterEntity(Entity* entity);
 
 	/**
+	* Registers a sprite to the spriteList
+	*/
+	void RegisterSprite(Sprite* sprite);
+
+	/**
 	* Prepares and renders the entire drawList
 	*/
 	void Render(Camera* camera);
 
-	/**
-	* Draws a 2d sprite on the screen
-	*/
-	void DrawSprite(Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
-	
 	/**
 	* Returns the GLFW Window
 	*/

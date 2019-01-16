@@ -39,14 +39,7 @@ void Entity::UpdateChildren() {
 
 void Entity::Render(Renderer* renderer, Camera* camera) {
 	if (this->model != nullptr) {
-		switch (this->renderMode) {
-		case RenderMode::WorldSpace:
-			renderer->RegisterEntity(this);
-			break;
-		case RenderMode::ScreenSpace:
-			renderer->DrawSprite(model, this->globalPosition, this->globalRotation, localScale);
-			break;
-		}
+		renderer->RegisterEntity(this);
 	}
 
 	for (unsigned i = 0; i < children.size(); i++) {
@@ -54,7 +47,7 @@ void Entity::Render(Renderer* renderer, Camera* camera) {
 	}
 }
 
-Entity::Entity(RenderMode renderMode, Shader* shader, Material* material) {
+Entity::Entity() {
 	if (!_currentId) { // If _currentId is not yet initialized
 		_currentId = 0; // Set _currentId to 0;
 	}
@@ -62,7 +55,6 @@ Entity::Entity(RenderMode renderMode, Shader* shader, Material* material) {
 	this->parent = nullptr; // Set parent to nullptr
 	this->model = nullptr; // Set model to nullptr
 	this->id = _currentId; // Set this id to the _currentId
-	this->renderMode = renderMode; // Set the render type
 
 	//Set scale
 	this->localScale = Vec3(1.0f,1.0f,1.0f);
@@ -223,14 +215,6 @@ Model* Entity::GetModel() {
 	return this->model;
 }
 
-void Entity::SetRenderMode(RenderMode renderMode) {
-	this->renderMode = renderMode;
-}
-
-RenderMode Entity::GetRenderMode() {
-	return this->renderMode;
-}
-
 void Entity::SetParent(Entity* parent) {
 	if (parent != nullptr) {
 		this->parent = parent;
@@ -248,58 +232,4 @@ Entity::~Entity() {
 
 	Debug::Log("Deleted Entity:", typeid(*this).name());
 	Debug::Log(std::to_string(this->GetId()), typeid(*this).name());
-}
-
-
-// Sprite Definitions
-
-float Sprite::_defaultUvCoords[8] = { 1.0f, 0.0f,
-									  0.0f, 0.0f, 
-									  1.0f, 1.0f, 
-									  0.0f, 1.0f }; // Declare static member
-
-void Sprite::Create() {
-	std::vector<float> _vertices = {
-		// first triangle
-		1.0f,  1.0f, 0.0f, _uvData._rightUp[0], _uvData._rightUp[1], // top right
-		1.0f, -1.0f, 0.0f, _uvData._rightDown[0], _uvData._rightDown[1],  // bottom right
-		-1.0f,  1.0f, 0.0f, _uvData._leftUp[0], _uvData._leftUp[1], // top left 
-		// second triangle
-		1.0f, -1.0f, 0.0f, _uvData._rightDown[0], _uvData._rightDown[1], // bottom right
-		-1.0f, -1.0f, 0.0f, _uvData._leftDown[0], _uvData._leftDown[1], // bottom left
-		-1.0f,  1.0f, 0.0f, _uvData._leftUp[0], _uvData._leftUp[1]   // top left
-	};
-
-	Model* model = new Model();
-	Material* mat = new Material();
-	mat->SetShader(ResourceManager::GetShader("_aquariteDefaultSpriteShader"));
-	model->AddMaterial(mat);
-
-	Mesh* mesh = new Mesh();
-	mesh->GenerateBuffers(_vertices); // Generate buffers
-	model->AddMesh(mesh); // Set the mesh active
-}
-
-// Default parameter is taken in if no parameter is passed
-Sprite::Sprite(float _uvCoords[8], RenderMode renderMode) {
-	//Set render mode
-	this->SetRenderMode(renderMode);
-
-	//Handle Uv Data
-	UVData4p _uvData;
-	_uvData._rightDown = glm::vec2(_defaultUvCoords[0],_defaultUvCoords[1]);
-	_uvData._leftDown = glm::vec2(_defaultUvCoords[2], _defaultUvCoords[3]);
-	_uvData._rightUp = glm::vec2(_defaultUvCoords[4], _defaultUvCoords[5]);
-	_uvData._leftUp = glm::vec2(_defaultUvCoords[6], _defaultUvCoords[7]);
-	this->_uvData = _uvData; // Set Uv Data
-	this->Create();
-}
-
-Sprite::Sprite(UVData4p _uvData) {
-	//Set UV data
-	this->_uvData._leftUp = _uvData._leftUp;
-	this->_uvData._rightUp = _uvData._rightUp;
-	this->_uvData._leftDown = _uvData._leftDown;
-	this->_uvData._rightDown = _uvData._rightDown;
-	this->Create();
 }

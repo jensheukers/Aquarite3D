@@ -171,6 +171,9 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 	}
 }
 
+void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 scale) {
+}
+
 void Renderer::DrawSkybox() {
 	//Draw Skybox
 	glDepthMask(GL_FALSE); // Disable depth mask
@@ -294,6 +297,10 @@ void Renderer::Clear() {
 	for (size_t i = 0; i < drawList.size(); i++) {
 		drawList.erase(drawList.begin() + i); // Erase pointer
 	}
+
+	for (size_t i = 0; i < spriteList.size(); i++) {
+		spriteList.erase(spriteList.begin() + i); // Erase pointer
+	}
 }
 
 void Renderer::AddLight(Light* light) {
@@ -311,6 +318,10 @@ void Renderer::RemoveLight(Light* light) {
 
 void Renderer::RegisterEntity(Entity* entity) {
 	drawList.push_back(entity); // Add pointer
+}
+
+void Renderer::RegisterSprite(Sprite* sprite) {
+	//drawList.push_back(sprite); // Add pointer
 }
 
 void Renderer::Render(Camera* camera) {
@@ -350,6 +361,11 @@ void Renderer::Render(Camera* camera) {
 		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
 	}
 
+	//Draw all sprites
+	for (size_t i = 0; i < spriteList.size(); i++) {
+		//DrawSprite(spriteList[i]->GetModel(), spriteList[i]->position, spriteList[i]->GetScale());
+	}
+
 	//Unbind framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
@@ -362,10 +378,6 @@ void Renderer::Render(Camera* camera) {
 
 	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
 	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
-}
-
-void Renderer::DrawSprite(Model* texture, Vec3 position, Vec3 rotation, Vec3 scale) {
-
 }
 
 GLFWwindow* Renderer::GetWindow() {

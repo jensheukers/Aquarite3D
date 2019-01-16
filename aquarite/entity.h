@@ -16,12 +16,6 @@
 #include "math/vec3.h"
 #include "model.h"
 
-// Enum with available rendering types
-enum RenderMode {
-	WorldSpace, /// @brief WorldSpace rendering is for entities that are to be rendered in the world
-	ScreenSpace /// @brief ScreenSpace rendering is mainly used for 2D Sprite rendering
-};
-
 class Entity {
 private:
 	//Global members
@@ -30,7 +24,6 @@ private:
 
 	//Local members
 	unsigned id; /// @brief The Id of this entity
-	RenderMode renderMode; /// @brief Type of rendering to be applied to this entity
 
 	Vec3 globalPosition; /// @brief the exact Position in world space.
 	Vec3 localRotation; /// @brief local rotation Vector3
@@ -58,7 +51,7 @@ public:
 	/**
 	* Constructor, if RenderMode is not defined then RenderMode will be WorldSpace
 	*/
-	Entity(RenderMode renderType = RenderMode::WorldSpace, Shader* shader = nullptr, Material* = nullptr);
+	Entity();
 
 	/**
 	* Returns id of the entity
@@ -156,16 +149,6 @@ public:
 	Model* GetModel();
 
 	/**
-	* Sets the RenderMode
-	*/
-	void SetRenderMode(RenderMode renderMode);
-
-	/**
-	* Returns the RenderMode
-	*/
-	RenderMode GetRenderMode();
-
-	/**
 	* Sets the parent object of this entity if parent is not nullptr
 	*/
 	void SetParent(Entity* parent);
@@ -180,38 +163,4 @@ public:
 	*/
 	~Entity();
 };
-
-/**
-* UV Data structure containing 4 glm::vec2 points defining uv coordinates
-*/
-struct UVData4p {
-	glm::vec2 _leftUp; /// @brief The Left Up Coordinate
-	glm::vec2 _rightUp; /// @brief The Right Up Coordinate
-	glm::vec2 _leftDown; /// @brief The Left Down Coordinate
-	glm::vec2 _rightDown; /// @brief The Right Down Coordinate
-};
-
-class Sprite : public Entity {
-private:
-	UVData4p _uvData; /// @brief 4 point UV Data structure holding uv data
-
-	/**
-	* Create the sprite, can only be called from within
-	*/
-	void Create();
-public:
-	// Default UV Coords public due to we want to provide the end user with this data if requested
-	static float _defaultUvCoords[8]; /// @brief Array Containing Default UV Coords
-
-	/**
-	* Default Constructor, takes in 4 parameters defining uv coordinates and a parameter defining the Rendering Mode
-	*/
-	Sprite(float _uvCoords[8] = _defaultUvCoords, RenderMode renderType = RenderMode::ScreenSpace);
-
-	/**
-	* Constructor taking a _uvData structure
-	*/
-	Sprite(UVData4p _uvData);
-};
-
 #endif // !ENTITY_H
