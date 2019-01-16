@@ -13,6 +13,11 @@
 #include "graphics\material.h"
 #include "mesh.h"
 
+enum DrawMode {
+	Default = 0,
+	Late
+};
+
 class Model {
 private:
 	std::vector<Material*> materials; /// @brief List of materials used on this model, material index should match mesh index
@@ -20,6 +25,7 @@ private:
 	std::string name; /// @brief Name of the model
 	float sphereRadius; /// @brief The radius of the sphere of the model, for frustum culling
 	bool ignoreFrustum; /// @brief If true frustum culling will be ignored for this model
+	DrawMode drawMode; /// @brief The mode in wich to draw
 public:
 
 	/**
@@ -96,5 +102,15 @@ public:
 	* Sets ignoreFrustum
 	*/
 	void IgnoreFrustum(bool state);
+
+	/**
+	* Returns the drawMode
+	*/
+	DrawMode GetDrawMode();
+
+	/**
+	* Sets the drawMode
+	*/
+	void SetDrawMode(DrawMode mode);
 };
 #endif // !MODEL_H

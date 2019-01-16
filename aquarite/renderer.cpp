@@ -336,12 +336,19 @@ void Renderer::Render(Camera* camera) {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->GetFBO());
 	glEnable(GL_DEPTH_TEST);
 
-	//Render
+	//Render default models
 	for (std::map<float, Entity*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) { //Finally draw to screen
+		if (it->second->GetModel()->GetDrawMode() != DrawMode::Default) continue; // continue iteration if drawmode is not Default
 		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
 	}
 
-	DrawSkybox();
+	DrawSkybox(); // We want to draw the skybox before the late draw calls, this is due to transparancy
+
+	//Render models with late drawmode
+	for (std::map<float, Entity*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) { //Finally draw to screen
+		if (it->second->GetModel()->GetDrawMode() != DrawMode::Late) continue; // continue iteration if drawmode is not Late
+		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
+	}
 
 	//Unbind framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
