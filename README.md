@@ -45,7 +45,7 @@ Model files are stored as .amod files in Aquarite3D. These files can contain mul
 To create model files you need to have a mesh and a material, these should be specified in the .meta file
 A model can hold multiple meshes and materials, and holds 2 variables for frustum culling purposes(see below).</br>
 A model also has a drawMode property, the value can either be Default or Late, Late drawing should be mostly used for
-Models with transparency. Though you should always try to render as less models as possible late, as it does affect performance slightly
+Models with transparency. Though you should always try to render as less models as possible late, as it does affect performance slightly </br>
 a model should be defined in this order:
 ```
 #MODEL
