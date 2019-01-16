@@ -14,6 +14,14 @@ version=0.1f
 BrickWall=textures/brickwall.tga
 Window=textures/window.tga
 
+// Skybox
+Skybox_bk=textures/skybox/bk.tga
+Skybox_dn=textures/skybox/dn.tga
+Skybox_ft=textures/skybox/ft.tga
+Skybox_lf=textures/skybox/lf.tga
+Skybox_rt=textures/skybox/rt.tga
+Skybox_up=textures/skybox/up.tga
+
 #MESHES
 Cube=meshes/cube.obj
 Teapot=meshes/teapot.obj

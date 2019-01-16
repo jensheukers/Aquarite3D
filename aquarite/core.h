@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Core class.
 *
-*	Version: 13/1/2019
+*	Version: 16/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -125,6 +125,16 @@ public:
 	* Returns the time elapsed since start of program
 	*/
 	static unsigned GetTimeElapsed();
+
+	/**
+	* Returns the skybox of the renderer
+	*/
+	static SkyBox* GetRendererSkybox();
+
+	/**
+	* Returns the framebuffer of the renderer
+	*/
+	static FrameBuffer* GetRendererFrameBuffer();
 };
 
 #endif // !CORE_H

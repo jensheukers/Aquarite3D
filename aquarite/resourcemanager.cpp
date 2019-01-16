@@ -27,6 +27,7 @@ ResourceManager* ResourceManager::GetInstance() {
 	_instance->AddShader("_aquariteDefaultShader", new Shader("shaders/default.vs", "shaders/default.fs"));
 	_instance->AddShader("_aquariteDefaultSpriteShader", new Shader("shaders/sprite_default.vs", "shaders/sprite_default.fs"));
 	_instance->AddShader("_aquariteDefaultFrameBufferShader", new Shader("shaders/framebuffer_default.vs", "shaders/framebuffer_default.fs"));
+	_instance->AddShader("_aquariteDefaultSkyBoxShader", new Shader("shaders/skybox_default.vs", "shaders/skybox_default.fs"));
 
 	// Add default material to material list
 	_instance->AddMaterial("_aquariteDefaultMaterial", new Material());

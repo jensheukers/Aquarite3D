@@ -3,7 +3,7 @@
 *
 *	Description: Header file for renderer class
 *
-*	Version: 15/1/2019
+*	Version: 16/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -171,6 +171,27 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 	}
 }
 
+void Renderer::DrawSkybox() {
+	//Draw Skybox
+	glDepthMask(GL_FALSE); // Disable depth mask
+	glDepthFunc(GL_LEQUAL);
+	glUseProgram(skybox->GetShader()->GetShaderProgram());
+
+	GLint viewLoc = glGetUniformLocation(skybox->GetShader()->GetShaderProgram(), "view");
+	GLint projLoc = glGetUniformLocation(skybox->GetShader()->GetShaderProgram(), "projection");
+
+	glm::mat4 convertedView = glm::mat4(glm::mat3(view)); // remove translation from view matrix
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(convertedView));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+	glBindVertexArray(skybox->GetVAO());
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->GetCubeMapTexture());
+	glDrawArrays(GL_TRIANGLES, 0, 36); // Draw skybox
+
+	glDepthMask(GL_TRUE); // Enable depth mask
+	glDepthFunc(GL_LESS);
+}
+
 int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//Initialize GLFW
 	if (!glfwInit()) {
@@ -210,6 +231,12 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	frameBuffer = new FrameBuffer(Core::GetResolution());
 	frameBuffer->SetShader(ResourceManager::GetShader("_aquariteDefaultFrameBufferShader"));
 	frameBuffer->GetShader()->SetInt("screenTexture", 0);
+
+	//Create skybox instance and set shader
+	//We wont set any textures, as this is up to the user
+	//The skybox is pure a holder
+	skybox = new SkyBox();
+	skybox->GetShader()->SetInt("skybox", 0);
 
 	//Generate screen quad vbo
 	GenerateScreenQuadBuffers(screenVAO, screenVBO);
@@ -314,6 +341,8 @@ void Renderer::Render(Camera* camera) {
 		DrawModel(camera, it->second->GetModel(), it->second->GetPositionGlobal(), it->second->GetRotationGlobal(), it->second->GetScale());
 	}
 
+	DrawSkybox();
+
 	//Unbind framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
@@ -338,6 +367,10 @@ GLFWwindow* Renderer::GetWindow() {
 
 FrameBuffer* Renderer::GetFrameBuffer() {
 	return this->frameBuffer;
+}
+
+SkyBox* Renderer::GetSkybox() {
+	return this->skybox;
 }
 
 Renderer::~Renderer() {

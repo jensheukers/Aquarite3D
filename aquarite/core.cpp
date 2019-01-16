@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 13/1/2019
+*	Version: 16/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -221,4 +221,12 @@ void Core::SetFov(float amount) {
 
 float Core::GetFov() {
 	return Core::GetInstance()->_fov;
+}
+
+SkyBox* Core::GetRendererSkybox() {
+	return Core::GetInstance()->renderer->GetSkybox();
+}
+
+FrameBuffer* Core::GetRendererFrameBuffer() {
+	return Core::GetInstance()->renderer->GetFrameBuffer();
 }

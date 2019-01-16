@@ -3,7 +3,7 @@
 *
 *	Description: Source file for renderer class
 *
-*	Version: 13/1/2019
+*	Version: 16/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -17,6 +17,7 @@
 #include "math/vec3.h"
 #include "math/pointx.h"
 #include "graphics/framebuffer.h"
+#include "graphics/cubemap.h"
 
 //Forward declarations
 class Entity;
@@ -31,7 +32,10 @@ private:
 	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
 	std::vector<Light*> lights; /// @brief Vector containing lights.
 	glm::mat4 view, projection; /// @brief The view and projection matrixes
+
+	//Custom object holders
 	FrameBuffer* frameBuffer; /// @brief The framebuffer instance of the renderer
+	SkyBox* skybox; /// @brief The skybox to be rendered.
 
 	//We need to create a screen vbo so we can render our scene to a quad, for post processing purposes
 	unsigned int screenVAO, screenVBO; /// @brief Screen Vertex Array Object, Screen Vertex Buffer Object
@@ -50,6 +54,11 @@ private:
 	* Renders a model to the screen
 	*/
 	void DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotation, Vec3 scale);
+
+	/**
+	* Renders the skybox
+	*/
+	void DrawSkybox();
 public:
 	/**
 	* Sets up window context, sets up OpenGL properties
@@ -116,6 +125,11 @@ public:
 	* Returns the framebuffer
 	*/
 	FrameBuffer* GetFrameBuffer();
+
+	/**
+	* Returns the skybox
+	*/
+	SkyBox* GetSkybox();
 
 	/**
 	* Destructor
