@@ -23,6 +23,18 @@ Vec3::Vec3(float x, float y, float z) {
 	this->z = z;
 }
 
+Vec3::Vec3(float x) {
+	this->x = x;
+	this->y = x;
+	this->z = z;
+}
+
+Vec3::Vec3(float x, float y) {
+	this->x = x;
+	this->y = y;
+	this->z = y;
+}
+
 Vec3 Vec3::operator+(Vec3 &v) {
 
 	Vec3 res;

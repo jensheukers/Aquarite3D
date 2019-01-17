@@ -40,6 +40,16 @@ public:
 	Vec3(float x, float y, float z);
 
 	/**
+	* Constructor with only x component, all other components will equal x
+	*/
+	Vec3(float x);
+
+	/**
+	* Constructor with x and y component, all other components will equal y
+	*/
+	Vec3(float x, float y);
+
+	/**
 	* Set the vector to given param
 	*/
 	Vec3* Set(Vec3 other);

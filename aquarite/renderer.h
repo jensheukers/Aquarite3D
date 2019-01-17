@@ -39,6 +39,9 @@ private:
 	FrameBuffer* frameBuffer; /// @brief The framebuffer instance of the renderer
 	SkyBox* skybox; /// @brief The skybox to be rendered.
 
+	//Shader used for drawing sprites
+	Shader* spriteShader; ///@brief The shader used to draw sprites
+
 	//We need to create a screen vbo so we can render our scene to a quad, for post processing purposes
 	unsigned int screenVAO, screenVBO; /// @brief Screen Vertex Array Object, Screen Vertex Buffer Object
 
@@ -60,7 +63,7 @@ private:
 	/**
 	* Draws a 2d sprite on the screen
 	*/
-	void DrawSprite(Model* model, Vec3 position, Vec3 scale);
+	void DrawSprite(Texture* texture, Vec3 position, Vec3 scale);
 
 	/**
 	* Renders the skybox

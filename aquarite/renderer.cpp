@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "graphics/light.h"
+#include "sprite.h"
 
 #define MAX_LIGHTS 25
 
@@ -171,7 +172,18 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 	}
 }
 
-void Renderer::DrawSprite(Model* model, Vec3 position, Vec3 scale) {
+void Renderer::DrawSprite(Texture* texture, Vec3 position, Vec3 scale) {
+	glDisable(GL_DEPTH_TEST); // Disable depth testing
+
+	glUseProgram(spriteShader->GetShaderProgram()); // Bind framebuffer shader program
+	glBindVertexArray(screenVAO); // Bind Vertex Array Object
+
+	//Set uniforms
+	spriteShader->SetVec2("position", glm::vec2(position.x, position.y));
+	spriteShader->SetVec2("scale", glm::vec2(scale.x, scale.y));
+
+	glBindTexture(GL_TEXTURE_2D, texture->GetGLTexture()); // Bind framebuffer texture
+	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 }
 
 void Renderer::DrawSkybox() {
@@ -240,6 +252,9 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//The skybox is pure a holder
 	skybox = new SkyBox();
 	skybox->GetShader()->SetInt("skybox", 0);
+
+	//Init sprite shader
+	spriteShader = new Shader("shaders/sprite_default.vs", "shaders/sprite_default.fs");
 
 	//Generate screen quad vbo
 	GenerateScreenQuadBuffers(screenVAO, screenVBO);
@@ -321,7 +336,7 @@ void Renderer::RegisterEntity(Entity* entity) {
 }
 
 void Renderer::RegisterSprite(Sprite* sprite) {
-	//drawList.push_back(sprite); // Add pointer
+	spriteList.push_back(sprite); // Add pointer
 }
 
 void Renderer::Render(Camera* camera) {
@@ -362,8 +377,8 @@ void Renderer::Render(Camera* camera) {
 	}
 
 	//Draw all sprites
-	for (size_t i = 0; i < spriteList.size(); i++) {
-		//DrawSprite(spriteList[i]->GetModel(), spriteList[i]->position, spriteList[i]->GetScale());
+	for (i = 0; i < spriteList.size(); i++) {
+		DrawSprite(spriteList[i]->GetTexture(), spriteList[i]->GetPositionGlobal(), spriteList[i]->GetScale());
 	}
 
 	//Unbind framebuffer
@@ -371,10 +386,10 @@ void Renderer::Render(Camera* camera) {
 	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
 
 	//Disable depth testing (For drawing quad to screen)
+	glDisable(GL_DEPTH_TEST); // Disable depth testing
+
 	glUseProgram(frameBuffer->GetShader()->GetShaderProgram()); // Bind framebuffer shader program
 	glBindVertexArray(screenVAO); // Bind Vertex Array Object
-
-	glDisable(GL_DEPTH_TEST); // Disable depth testing
 
 	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
 	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
