@@ -8,6 +8,7 @@ project (Aquarite3D)
 file(GLOB MAIN "aquarite/*.cpp" "aquarite/*.h" )
 file(GLOB MATH "aquarite/math/*.cpp" "aquarite/math/*.h")
 file(GLOB GRAPHICS "aquarite/graphics/*.cpp" "aquarite/graphics/*.h")
+file(GLOB UI "aquarite/ui/*.cpp" "aquarite/ui/*.h")
 file(GLOB GAME "game/*.cpp" "game/*.h") 
 
 # Includes
@@ -24,7 +25,7 @@ link_directories(${GLFW_DIR}/lib-vc2015 ${GLEW_DIR}/lib/Win32 ${OPENAL_DIR}/libs
 
 # Add Executable
 
-add_executable(Aquarite3D ${MAIN} ${MATH} ${GRAPHICS} ${GAME})
+add_executable(Aquarite3D ${MAIN} ${MATH} ${GRAPHICS} ${UI} ${GAME})
 
 set(CMAKE_CXX_FLAGS_RELEASE "/MD")
 set(CMAKE_CXX_FLAGS_DEBUG "/MD")
@@ -72,6 +73,7 @@ add_custom_command(TARGET Aquarite3D POST_BUILD
 source_group("aquarite" FILES ${MAIN})
 source_group("math" FILES ${MATH})
 source_group("graphics" FILES ${GRAPHICS})
+source_group("ui" FILES ${UI})
 source_group("game" FILES ${GAME})
 
 
