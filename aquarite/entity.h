@@ -1,7 +1,7 @@
 /**
 *	Filename: entity.h
 *
-*	Description: Header file for Entity class, also contains definitions for Sprite (basicly a quad)
+*	Description: Header file for Entity class.
 *
 *	Version: 15/1/2019
 *

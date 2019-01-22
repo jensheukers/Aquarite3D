@@ -16,7 +16,7 @@
 #include "camera.h"
 #include "texture.h"
 #include "graphics/light.h"
-#include "sprite.h"
+#include "ui/uielement.h"
 
 #define MAX_LIGHTS 25
 
@@ -130,7 +130,7 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 		return; // Returns if not equal
 	}
 
-	for (size_t i = 0; i < model->GetMeshesCount(); i++) { // For every mesh on the model
+	for (int i = 0; i < model->GetMeshesCount(); i++) { // For every mesh on the model
 		if (!sameModelAsLastDraw) { // If model is different we have to bind some stuff
 			glUseProgram(model->GetMaterial(i)->GetShader()->GetShaderProgram()); // Use shader program
 
@@ -313,8 +313,8 @@ void Renderer::Clear() {
 		drawList.erase(drawList.begin() + i); // Erase pointer
 	}
 
-	for (size_t i = 0; i < spriteList.size(); i++) {
-		spriteList.erase(spriteList.begin() + i); // Erase pointer
+	for (size_t i = 0; i < uiElementList.size(); i++) {
+		uiElementList.erase(uiElementList.begin() + i); // Erase pointer
 	}
 }
 
@@ -335,8 +335,8 @@ void Renderer::RegisterEntity(Entity* entity) {
 	drawList.push_back(entity); // Add pointer
 }
 
-void Renderer::RegisterSprite(Sprite* sprite) {
-	spriteList.push_back(sprite); // Add pointer
+void Renderer::RegisterUIElement(UIElement* element) {
+	uiElementList.push_back(element); // Add pointer
 }
 
 void Renderer::Render(Camera* camera) {
@@ -377,8 +377,8 @@ void Renderer::Render(Camera* camera) {
 	}
 
 	//Draw all sprites
-	for (i = 0; i < spriteList.size(); i++) {
-		DrawSprite(spriteList[i]->GetTexture(), spriteList[i]->GetPositionGlobal(), spriteList[i]->GetScale());
+	for (i = 0; i < uiElementList.size(); i++) {
+		DrawSprite(uiElementList[i]->GetImage(), uiElementList[i]->GetPositionGlobal(), uiElementList[i]->GetScale());
 	}
 
 	//Unbind framebuffer

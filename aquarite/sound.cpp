@@ -131,7 +131,7 @@ void Sound::LoadAudioSource(std::string path) {
 void Sound::SetDistanceModel(ALfloat model) {
 	if (this->source == nullptr) return;
 
-	alDistanceModel(model);
+	alDistanceModel((ALenum)model);
 	this->distanceModel = model;
 }
 

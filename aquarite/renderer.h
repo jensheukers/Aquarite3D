@@ -21,7 +21,7 @@
 
 //Forward declarations
 class Entity;
-class Sprite;
+class UIElement;
 class Camera;
 class Model;
 class Light;
@@ -31,7 +31,7 @@ class Renderer {
 private:
 	GLFWwindow * window; /// @brief The window of the renderer
 	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
-	std::vector<Sprite*> spriteList; /// @brief The vector of sprites to be drawn, will reset each frame
+	std::vector<UIElement*> uiElementList; /// @brief The vector of sprites to be drawn, will reset each frame
 	std::vector<Light*> lights; /// @brief Vector containing lights.
 	glm::mat4 view, projection; /// @brief The view and projection matrixes
 
@@ -119,7 +119,7 @@ public:
 	/**
 	* Registers a sprite to the spriteList
 	*/
-	void RegisterSprite(Sprite* sprite);
+	void RegisterUIElement(UIElement* sprite);
 
 	/**
 	* Prepares and renders the entire drawList
