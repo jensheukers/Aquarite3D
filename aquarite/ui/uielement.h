@@ -1,6 +1,7 @@
 //	Filename: uielement.h
 //
 //	Description: Header file for UI element class, UIElement extends from entity.
+//				 This class also contains definitions for: UIButton.
 //
 //	Version: 23/1/2019
 //
@@ -16,11 +17,11 @@
 * UIElement extends from Entity class, and overrides the Render method
 */
 class UIElement : public Entity {
-private:
+protected:
 	Texture* image; /**< Image to be displayed by the UIElement. */
 	bool mouseInBounds; /**< True if mouse is inside bounds */
 	bool mouseInBoundsLastFrame; /**< True if mouse is inside bounds last frame*/
-private:
+
 	/*
 	* Overridden Render method, Calls the renderer
 	* @param renderer, The renderer instance
@@ -69,6 +70,24 @@ public:
 	* Returns true if point on screen is inside the UIElement's bounds
 	*/
 	bool PointInBounds(Point2f point);
+};
+
+/**
+* UIButton extends from UIElement, but has more functionality
+*/
+class UIButton : public UIElement {
+	/**
+	* Overridden Update method.
+	* @return void
+	*/
+	void Update() override;
+
+	/**
+	* Virtual method, Is triggered when user clicks on the button.
+	* @param The button clicked.
+	* @return void
+	*/
+	virtual void OnClick(int btn) {};
 };
 
 #endif // !UIELEMENT_H

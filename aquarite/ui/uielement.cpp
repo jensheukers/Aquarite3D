@@ -61,3 +61,41 @@ bool UIElement::PointInBounds(Point2f point) {
 	//If cheks are passed return true
 	return true;
 }
+
+void UIButton::Update() {
+	//First check if cursor is active, if not we dont want to check
+	if (!Core::CursorEnabled()) return;
+
+	//Check mouse positions
+	if (PointInBounds(Input::GetMousePosition())) {
+		if (Input::GetButtonDown(BUTTONCODE_LEFT)) {
+			OnClick(BUTTONCODE_LEFT);
+		}
+
+		if (Input::GetButtonDown(BUTTONCODE_MIDDLE)) {
+			OnClick(BUTTONCODE_MIDDLE);
+		}
+
+		if (Input::GetButtonDown(BUTTONCODE_RIGHT)) {
+			OnClick(BUTTONCODE_RIGHT);
+		}
+
+		if (mouseInBoundsLastFrame) {
+			OnStay();
+			mouseInBounds = true;
+		}
+		else {
+			OnEnter();
+		}
+
+		mouseInBoundsLastFrame = true;
+	}
+	else {
+		if (mouseInBoundsLastFrame) {
+			OnLeave();
+			mouseInBounds = false;
+		}
+
+		mouseInBoundsLastFrame = false;
+	}
+}
