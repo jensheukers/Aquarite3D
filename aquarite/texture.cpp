@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Texture class, ported from Project Dynamite
 *
-*	Version: 11/1/2019
+*	Version: 23/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -153,6 +153,30 @@ void Texture::SetColor(glm::vec4 color) {
 		this->textureData->imageData[i] = (GLubyte)color.r; // Set Red
 		this->textureData->imageData[i + 1] = (GLubyte)color.g; // Set Green
 		this->textureData->imageData[i + 2] = (GLubyte)color.b; // Set Blue
+	}
+
+	this->UploadToGPU(); //Re-Upload the texture
+}
+
+void Texture::GenerateTexture(int width, int height) {
+	this->textureData = new TextureData();
+	
+	//Set some properties
+	this->textureData->bpp = 24;
+	this->textureData->width = width;
+	this->textureData->height = height;
+	this->textureData->bytesPerPixel = (this->textureData->bpp / 8);
+	this->textureData->type = GL_RGB;
+
+	//Allocate
+	float imageSize = this->textureData->bytesPerPixel * (width * height);
+	this->textureData->imageData = (GLubyte*)malloc(imageSize); //Allocate memory
+
+	int bufferSize = (this->textureData->height * this->textureData->width) * this->textureData->bytesPerPixel; // Get the buffer size
+	for (int i = 0; i < bufferSize; i += this->textureData->bytesPerPixel) { // For every pixel
+		this->textureData->imageData[i] = (GLubyte)255; // Set Red
+		this->textureData->imageData[i + 1] = (GLubyte)255; // Set Green
+		this->textureData->imageData[i + 2] = (GLubyte)255; // Set Blue
 	}
 
 	this->UploadToGPU(); //Re-Upload the texture

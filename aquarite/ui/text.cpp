@@ -7,6 +7,12 @@
 //	© 2019, Jens Heukers
 #include "text.h"
 
+Text::Text() {
+	this->color = Point4f(1, 1, 1, 1);
+	this->textScale = 1;
+	this->text = "";
+}
+
 void Text::Render(Renderer* renderer, Camera* camera) {
 	renderer->RegisterText(this);
 }

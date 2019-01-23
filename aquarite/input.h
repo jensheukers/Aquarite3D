@@ -3,9 +3,9 @@
 *
 *	Description: Header file for Input class.
 *
-*	Version: 19/12/2018
+*	Version: 23/1/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
 
 //Define Button macros
@@ -16,6 +16,7 @@
 #define		BUTTONCODE_MIDDLE	2
 
 //Define Key macros
+#define		KEYCODE_EMPTY_KEY 0
 #define 	KEYCODE_UNKNOWN   -1
 #define 	KEYCODE_SPACE   32
 #define 	KEYCODE_APOSTROPHE   39 /* ' */
@@ -157,6 +158,8 @@ private:
 	std::map<int, bool> _buttons; /// @brief Map containing all buttons pressed this frame
 	std::map<int, bool> _buttonsLast; /// @brief Map containing all buttons pressed last frame
 
+	int lastKey; /// @brief The last key pressed
+
 	Point2f _mousePos; /// @brief Point2 of floats containing Mouse Position
 	/**
 	* Returns the instance if found, else creates a new instance and returns.
@@ -223,6 +226,11 @@ public:
 	* Returns the mouse position as a Point2f
 	*/
 	static Point2f GetMousePosition();
+
+	/**
+	* Returns the last key pressed this frame, if there is no key pressed this frame it returns KEYCODE_EMPTY_KEY
+	*/
+	static int GetLastKey();
 };
 
 #endif // !INPUT_H

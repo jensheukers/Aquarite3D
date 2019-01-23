@@ -181,10 +181,40 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 void Renderer::DrawSprite(Texture* texture, Vec3 position, Vec3 scale) {
 	if (texture == nullptr) return;
 
+	float tx = (((float)texture->textureData->width / Core::GetResolution().x) * 2) - 1.f;
+	float ty = (((float)texture->textureData->height / Core::GetResolution().y) * 2) - 1.f;
+
+	float quadVertices[] = {
+		-1.0f,  ty,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		tx, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  ty,  0.0f, 1.0f,
+		tx, -1.0f,  1.0f, 0.0f,
+		tx,  ty,  1.0f, 1.0f
+	};
+
+	//Check if vao and vbo are not set, if not we generate buffers
+	if (spriteVAO == 0 && spriteVBO == 0) {
+		glGenVertexArrays(1, &spriteVAO);
+		glGenBuffers(1, &spriteVBO);
+		glBindVertexArray(spriteVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, spriteVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	}
+	else {
+		glBindBuffer(GL_ARRAY_BUFFER, spriteVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(quadVertices), &quadVertices);
+	}
+
 	glDisable(GL_DEPTH_TEST); // Disable depth testing
 
 	glUseProgram(spriteShader->GetShaderProgram()); // Bind framebuffer shader program
-	glBindVertexArray(screenVAO); // Bind Vertex Array Object
+	glBindVertexArray(spriteVAO); // Bind Vertex Array Object
 
 	//Normalize positions to get OpenGL coordinates
 	float x = (position.x / Core::GetResolution().x) * 2;
@@ -205,7 +235,9 @@ void Renderer::DrawText(std::string text, Point4f color, Point2f position, float
 	gltBeginDraw();
 
 	gltColor(color.x, color.y, color.z, color.w);
-	gltDrawText2D(glText, position.x, position.y, scale);
+
+	//We want to calculate y position from the Core::GetResolution().x value
+	gltDrawText2D(glText, position.x, Core::GetResolution().y - position.y, scale);
 
 	gltEndDraw();
 	gltDeleteText(glText);

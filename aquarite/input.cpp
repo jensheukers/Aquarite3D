@@ -3,10 +3,11 @@
 *
 *	Description: Source file for Input class.
 *
-*	Version: 19/12/2018
+*	Version: 23/1/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
+
 #include "input.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -55,6 +56,8 @@ void Input::HandleUpdates() {
 	for (size_t i = 0; i < Input::GetInstance()->_buttons.size(); i++) {
 		Input::GetInstance()->_buttonsLast[i] = Input::GetInstance()->_buttons[i];
 	}
+
+	Input::GetInstance()->lastKey = KEYCODE_EMPTY_KEY;
 }
 
 void Input::Init(GLFWwindow* window) {
@@ -78,6 +81,7 @@ bool Input::GetKeyUp(int keyCode) {
 
 void Input::SetKey(int keyCode, bool state) {
 	Input::GetInstance()->_keys[keyCode] = state;
+	Input::GetInstance()->lastKey = keyCode;
 }
 
 bool Input::GetButtonDown(int buttonCode) {
@@ -102,4 +106,8 @@ void Input::SetMousePos(Point2f point) {
 
 Point2f Input::GetMousePosition() {
 	return Input::GetInstance()->_mousePos;
+}
+
+int Input::GetLastKey() {
+	return Input::GetInstance()->lastKey;
 }

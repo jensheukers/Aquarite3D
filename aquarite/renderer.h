@@ -46,6 +46,7 @@ private:
 
 	//We need to create a screen vbo so we can render our scene to a quad, for post processing purposes
 	unsigned int screenVAO, screenVBO; /// @brief Screen Vertex Array Object, Screen Vertex Buffer Object
+	unsigned int spriteVAO, spriteVBO; /// @brief Sprite VBO and VAO, will be rebuffered each sprite draw, to fit size
 
 	/**
 	* Returns true if model is indeed inside our frustum

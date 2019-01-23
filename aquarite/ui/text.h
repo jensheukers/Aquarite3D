@@ -30,6 +30,11 @@ protected:
 	void Render(Renderer* renderer, Camera* camera) override;
 public:
 	/**
+	* Constructor
+	*/
+	Text();
+
+	/**
 	* Sets the color of the Text
 	* @param color, Point4f instance defining r,g,b,a values
 	* @return void

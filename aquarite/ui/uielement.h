@@ -9,9 +9,10 @@
 #ifndef UIELEMENT_H
 #define UIELEMENT_H
 
-//Include entity.h, texture.h
+//Include entity.h, texture.h, text.h
 #include "../entity.h"
 #include "../texture.h"
+#include "text.h"
 
 /**
 * UIElement extends from Entity class, and overrides the Render method
@@ -30,6 +31,11 @@ protected:
 	*/
 	void Render(Renderer* renderer, Camera* camera) override;
 public:
+	/**
+	* Constructor
+	*/
+	UIElement();
+
 	/**
 	* Overridden Update method.
 	* @return void
@@ -76,6 +82,7 @@ public:
 * UIButton extends from UIElement, but has more functionality
 */
 class UIButton : public UIElement {
+public:
 	/**
 	* Overridden Update method.
 	* @return void
@@ -88,6 +95,33 @@ class UIButton : public UIElement {
 	* @return void
 	*/
 	virtual void OnClick(int btn) {};
+};
+
+/**
+* UIInputfield extends from UIElement, but has a text element
+*/
+class UIInputField : public UIElement {
+private:
+	Text* text; /**< The text element of the input field. */
+	bool typing; /**< True if user is actively typing on the input field*/
+public:
+	/**
+	* Constructor
+	*/
+	UIInputField();
+
+	/**
+	* Overridden Update method.
+	* @return void
+	*/
+	void Update() override;
+
+	/**
+	* Sets the text instance
+	* @param text, The Text Instance
+	* @return void
+	*/
+	void SetTextInstance(Text* text);
 };
 
 #endif // !UIELEMENT_H

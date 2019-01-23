@@ -3,7 +3,7 @@
 *
 *	Description: Main Header for Texture class, ported from Project Dynamite
 *
-*	Version: 11/1/2019
+*	Version: 23/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -111,6 +111,11 @@ public:
 	* Set the color of the font
 	*/
 	void SetColor(glm::vec4 color);
+
+	/**
+	* Generates a 24 bit texture buffer
+	*/
+	void GenerateTexture(int width, int height);
 };
 
 #endif // !TEXTURE_H
