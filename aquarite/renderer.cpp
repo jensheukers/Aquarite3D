@@ -173,13 +173,19 @@ void Renderer::DrawModel(Camera* camera, Model* model, Vec3 position, Vec3 rotat
 }
 
 void Renderer::DrawSprite(Texture* texture, Vec3 position, Vec3 scale) {
+	if (texture == nullptr) return;
+
 	glDisable(GL_DEPTH_TEST); // Disable depth testing
 
 	glUseProgram(spriteShader->GetShaderProgram()); // Bind framebuffer shader program
 	glBindVertexArray(screenVAO); // Bind Vertex Array Object
 
+	//Normalize positions to get OpenGL coordinates
+	float x = (position.x / Core::GetResolution().x) * 2;
+	float y = (position.y / Core::GetResolution().y) * 2;
+
 	//Set uniforms
-	spriteShader->SetVec2("position", glm::vec2(position.x, position.y));
+	spriteShader->SetVec2("position", glm::vec2(x, y));
 	spriteShader->SetVec2("scale", glm::vec2(scale.x, scale.y));
 
 	glBindTexture(GL_TEXTURE_2D, texture->GetGLTexture()); // Bind framebuffer texture

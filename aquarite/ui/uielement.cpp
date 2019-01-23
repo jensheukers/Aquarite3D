@@ -2,14 +2,37 @@
 //
 //	Description: Source file for UI element class
 //
-//	Version: 22/1/2019
+//	Version: 23/1/2019
 //
 //	© 2019, Jens Heukers
 #include "uielement.h"
 #include "../core.h"
+#include "../input.h"
 
 void UIElement::Update() {
+	//First check if cursor is active, if not we dont want to check
+	if (!Core::CursorEnabled()) return;
 
+	//Check mouse positions
+	if (PointInBounds(Input::GetMousePosition())) {
+		if (mouseInBoundsLastFrame) {
+			OnStay();
+			mouseInBounds = true;
+		}
+		else {
+			OnEnter();
+		}
+
+		mouseInBoundsLastFrame = true;
+	}
+	else {
+		if (mouseInBoundsLastFrame) {
+			OnLeave();
+			mouseInBounds = false;
+		}
+
+		mouseInBoundsLastFrame = false;
+	}
 }
 
 void UIElement::Render(Renderer* renderer, Camera* camera) {
@@ -24,14 +47,17 @@ Texture* UIElement::GetImage() {
 	return this->image;
 }
 
-void UIElement::OnEnter() {
+bool UIElement::PointInBounds(Point2f point) {
+	if (this->image == nullptr) return false;
 
-}
+	//Check x component
+	if (point.x < position.x || point.x > position.x + this->image->textureData->width)
+		return false;
 
-void UIElement::OnStay() {
+	//Check y component
+	if (point.y < position.y || point.y > position.y + this->image->textureData->height)
+		return false;
 
-}
-
-void UIElement::OnLeave() {
-
+	//If cheks are passed return true
+	return true;
 }

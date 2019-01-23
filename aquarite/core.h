@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Core class.
 *
-*	Version: 16/1/2019
+*	Version: 23/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -40,6 +40,9 @@ private:
 
 	//Other components
 	Renderer* renderer; /// @brief Renderer Instance
+
+	//Cursor state
+	bool cursorEnabled; /// @brief true if cursor is enabled
 
 public:
 	//Static methods
@@ -100,6 +103,11 @@ public:
 	* Enable/Disable cursor
 	*/
 	static void SetCursorEnabled(bool state);
+
+	/**
+	* Returns true if cursor is enabled else returns false
+	*/
+	static bool CursorEnabled();
 
 	/**
 	* Returns the resolution as a Point2i

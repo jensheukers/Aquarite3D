@@ -2,7 +2,7 @@
 //
 //	Description: Header file for UI element class, UIElement extends from entity.
 //
-//	Version: 22/1/2019
+//	Version: 23/1/2019
 //
 //	© 2019, Jens Heukers
 #ifndef UIELEMENT_H
@@ -17,7 +17,9 @@
 */
 class UIElement : public Entity {
 private:
-	Texture* image; /**< Image to be displayed by the UIElement */
+	Texture* image; /**< Image to be displayed by the UIElement. */
+	bool mouseInBounds; /**< True if mouse is inside bounds */
+	bool mouseInBoundsLastFrame; /**< True if mouse is inside bounds last frame*/
 private:
 	/*
 	* Overridden Render method, Calls the renderer
@@ -50,18 +52,23 @@ public:
 	* Virtual method, Is triggered when user enters the ui element with the mouse
 	* @return void
 	*/
-	virtual void OnEnter();
+	virtual void OnEnter() {};
 
 	/**
 	* Virtual method, Is triggered when user has mouse inside the element
 	* @return void
 	*/
-	virtual void OnStay();
+	virtual void OnStay() {};
 
 	/**
 	* Virtual Method, Is triggered when user leaves the element
 	*/
-	virtual void OnLeave();
+	virtual void OnLeave() {};
+
+	/**
+	* Returns true if point on screen is inside the UIElement's bounds
+	*/
+	bool PointInBounds(Point2f point);
 };
 
 #endif // !UIELEMENT_H

@@ -3,7 +3,7 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 16/1/2019
+*	Version: 23/1/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -71,6 +71,9 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 		Debug::Log("Renderer has failed to Initialize", typeid(Core).name());
 		return 1;
 	}
+
+	//Set cursorEnabled to true by default
+	this->cursorEnabled = true;
 
 	// Initialize SceneManager, (if end user has not done it yet)
 	SceneManager::GetInstance();
@@ -197,6 +200,11 @@ void Core::HandleLightRegister(Light* light, int state) {
 
 void Core::SetCursorEnabled(bool state) {
 	Core::GetInstance()->renderer->EnableCursor(state);
+	Core::GetInstance()->cursorEnabled = state;
+}
+
+bool Core::CursorEnabled() {
+	return Core::GetInstance()->cursorEnabled;
 }
 
 Point2i Core::GetResolution() {
