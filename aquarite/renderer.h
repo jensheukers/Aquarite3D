@@ -22,6 +22,7 @@
 //Forward declarations
 class Entity;
 class UIElement;
+class Text;
 class Camera;
 class Model;
 class Light;
@@ -32,6 +33,7 @@ private:
 	GLFWwindow * window; /// @brief The window of the renderer
 	std::vector<Entity*> drawList; /// @brief The vector of entities to be drawn, will reset each frame
 	std::vector<UIElement*> uiElementList; /// @brief The vector of sprites to be drawn, will reset each frame
+	std::vector<Text*> textList; /// @brief The vector of text to be drawn, will reset each frame
 	std::vector<Light*> lights; /// @brief Vector containing lights.
 	glm::mat4 view, projection; /// @brief The view and projection matrixes
 
@@ -64,6 +66,11 @@ private:
 	* Draws a 2d sprite on the screen
 	*/
 	void DrawSprite(Texture* texture, Vec3 position, Vec3 scale);
+
+	/**
+	* Draws text to the screen
+	*/
+	void DrawText(std::string text, Point4f colour, Point2f position, float scale);
 
 	/**
 	* Renders the skybox
@@ -120,6 +127,11 @@ public:
 	* Registers a sprite to the spriteList
 	*/
 	void RegisterUIElement(UIElement* sprite);
+
+	/**
+	* Registers a text to the textList
+	*/
+	void RegisterText(Text* sprite);
 
 	/**
 	* Prepares and renders the entire drawList

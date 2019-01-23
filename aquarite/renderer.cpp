@@ -17,6 +17,11 @@
 #include "texture.h"
 #include "graphics/light.h"
 #include "ui/uielement.h"
+#include "ui/text.h"
+
+//Include glText external header file
+#define GLT_IMPLEMENTATION
+#include "../external/gltext.h"
 
 #define MAX_LIGHTS 25
 
@@ -45,6 +50,7 @@ void GenerateScreenQuadBuffers(unsigned int &vao, unsigned int &vbo) {
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	gltViewport(width, height);
 	Core::SetResolutionReference(Point2i(width, height));
 }
 
@@ -192,6 +198,19 @@ void Renderer::DrawSprite(Texture* texture, Vec3 position, Vec3 scale) {
 	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 }
 
+void Renderer::DrawText(std::string text, Point4f color, Point2f position, float scale) {
+	GLTtext* glText = gltCreateText();
+	gltSetText(glText, text.c_str());
+
+	gltBeginDraw();
+
+	gltColor(color.x, color.y, color.z, color.w);
+	gltDrawText2D(glText, position.x, position.y, scale);
+
+	gltEndDraw();
+	gltDeleteText(glText);
+}
+
 void Renderer::DrawSkybox() {
 	//Draw Skybox
 	glDepthMask(GL_FALSE); // Disable depth mask
@@ -265,6 +284,9 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//Generate screen quad vbo
 	GenerateScreenQuadBuffers(screenVAO, screenVBO);
 
+	//Initialize GlText
+	gltInit();
+
 	return 0; // Return 0 (No errors)
 }
 
@@ -322,6 +344,10 @@ void Renderer::Clear() {
 	for (size_t i = 0; i < uiElementList.size(); i++) {
 		uiElementList.erase(uiElementList.begin() + i); // Erase pointer
 	}
+
+	for (size_t i = 0; i < textList.size(); i++) {
+		textList.erase(textList.begin() + i); // Erase pointer
+	}
 }
 
 void Renderer::AddLight(Light* light) {
@@ -343,6 +369,10 @@ void Renderer::RegisterEntity(Entity* entity) {
 
 void Renderer::RegisterUIElement(UIElement* element) {
 	uiElementList.push_back(element); // Add pointer
+}
+
+void Renderer::RegisterText(Text* text) {
+	textList.push_back(text);
 }
 
 void Renderer::Render(Camera* camera) {
@@ -399,6 +429,11 @@ void Renderer::Render(Camera* camera) {
 
 	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
 	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
+
+	//Draw all texts
+	for (i = 0; i < textList.size(); i++) {
+		DrawText(textList[i]->GetText(), textList[i]->GetColor(), Point2f(textList[i]->position.x, textList[i]->position.y), textList[i]->GetTextScale());
+	}
 }
 
 GLFWwindow* Renderer::GetWindow() {
