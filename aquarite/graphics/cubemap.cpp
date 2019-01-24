@@ -38,6 +38,12 @@ void CubeMap::ConstructCubeMapTexture(std::vector<Texture*> textureFaces) {
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 			0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
 		);
+
+		if (this->textures.size() >= 6) {
+			this->textures.erase(this->textures.begin(), this->textures.begin() + i);
+		}
+
+		this->textures.push_back(textureFaces[i]);
 	}
 
 	//Set texture parameters
@@ -55,6 +61,14 @@ void CubeMap::ConstructCubeMapTexture(std::vector<Texture*> textureFaces) {
 
 unsigned int CubeMap::GetCubeMapTexture() {
 	return this->cubeMapTexture;
+}
+
+Texture* CubeMap::GetTexture(int index) {
+	if (this->textures.size() < index) {
+		return nullptr;
+	}
+
+	return this->textures[index];
 }
 
 //Skybox class

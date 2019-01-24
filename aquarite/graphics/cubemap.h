@@ -17,6 +17,7 @@
 class CubeMap {
 private:
 	unsigned int cubeMapTexture; /// @brief The cube map texture object
+	std::vector<Texture*> textures; /// @brief List of pointers to textures used
 public:
 	/**
 	* Takes in a array of 6 textures to construct a cubemap,
@@ -29,6 +30,11 @@ public:
 	* Returns the Cube Map Texture
 	*/
 	unsigned int GetCubeMapTexture();
+
+	/**
+	* Returns a texture on specific index
+	*/
+	Texture* GetTexture(int index);
 };
 
 //Skybox class inherits from CubeMap, it is not neccesary to include
