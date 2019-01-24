@@ -23,7 +23,7 @@ public:
 	/**
 	* Constructor
 	*/
-	FrameBuffer(Point2i size);
+	FrameBuffer(Point2i size, GLenum attachment);
 
 	/**
 	* returns the frame buffer object
