@@ -300,7 +300,7 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//Create framebuffer instance and set shader
-	frameBuffer = new FrameBuffer(Core::GetResolution());
+	frameBuffer = new FrameBuffer(Core::GetResolution(), GL_COLOR_ATTACHMENT0);
 	frameBuffer->SetShader(ResourceManager::GetShader("_aquariteDefaultFrameBufferShader"));
 	frameBuffer->GetShader()->SetInt("screenTexture", 0);
 
