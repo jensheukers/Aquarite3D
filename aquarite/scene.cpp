@@ -65,6 +65,8 @@ void Scene::LoadSceneData(std::string offset) {
 	Entity* entityptr = nullptr; // Entity pointer
 	Light* lightptr = nullptr; // Light pointer
 	DirectionalLight* dirLightptr = nullptr; // Dir light pointer
+	std::vector<Texture*> skyboxTextures;
+
 
 	std::string line;
 	std::ifstream file = std::ifstream(path);
@@ -75,6 +77,10 @@ void Scene::LoadSceneData(std::string offset) {
 			if (line == "") continue;
 
 			if (line == "#HEADER") {
+				type = line;
+			}
+			
+			if (line == "#SKYBOX") {
 				type = line;
 			}
 
@@ -117,6 +123,18 @@ void Scene::LoadSceneData(std::string offset) {
 					this->SetName(segments[1]);
 				}
 			}
+
+			if (type == "#SKYBOX") {
+				if (segments[0] == "texture" && skyboxTextures.size() <= 6) {
+					skyboxTextures.push_back(ResourceManager::GetTexture(segments[1]));
+
+					//If size is 6 we can create texture cubemap
+					if (skyboxTextures.size() == 6) {
+						Core::GetRendererSkybox()->ConstructCubeMapTexture(skyboxTextures);
+					}
+				}
+			}
+
 
 			//Entity
 			if (type == "#ENTITY") {

@@ -29,19 +29,7 @@ int main(int argc, char* argv[]) {
 	scene->SetActiveCamera(camera);
 	
 	Core::SetCursorEnabled(false);
-
-	//SET SKYBOX
-	std::vector<Texture*> skyboxTextures = {
-		ResourceManager::GetTexture("Skybox_ft"), 
-		ResourceManager::GetTexture("Skybox_bk"),
-		ResourceManager::GetTexture("Skybox_dn"),
-		ResourceManager::GetTexture("Skybox_up"),
-		ResourceManager::GetTexture("Skybox_rt"),
-		ResourceManager::GetTexture("Skybox_lf"),
-	};
-	Core::GetRendererSkybox()->ConstructCubeMapTexture(skyboxTextures);
-
-
+	
 	while (Core::GetInstance()->Active()) { // While the core is still active
 		Core::GetInstance()->HandleUpdates(); // Handle the updates
 

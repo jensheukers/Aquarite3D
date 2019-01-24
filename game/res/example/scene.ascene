@@ -1,6 +1,14 @@
 #HEADER
 name=EXAMPLE_SCENE
 
+#SKYBOX
+texture=Skybox_ft
+texture=Skybox_bk
+texture=Skybox_dn
+texture=Skybox_up
+texture=Skybox_rt
+texture=Skybox_lf
+
 #ENTITY
 model=Cube
 position=0.0f,0.0f,-5.0f
