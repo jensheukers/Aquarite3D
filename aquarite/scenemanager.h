@@ -65,9 +65,9 @@ public:
 	static Scene* GetScene(std::string name);
 
 	/**
-	* Add a scene to the scenes vector, then return scene ptr
+	* Add a scene to the scenes vector, then return the index
 	*/
-	static Scene* AddScene(Scene* scene);
+	static int AddScene(Scene* scene);
 
 	/**
 	* Removes the scene from the scenes vector

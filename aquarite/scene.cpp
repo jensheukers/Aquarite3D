@@ -14,6 +14,14 @@
 #include "core.h"
 #include "graphics/light.h"
 
+Scene::~Scene() {
+	for (size_t i = 0; i < GetChildren().size(); i++) {
+		if (static_cast<Light*>(GetChild(i))) {
+			RemoveLight(static_cast<Light*>(GetChild(i)));
+		}
+	}
+}
+
 Scene::Scene() {
 	this->SetName("Unnamed_Scene"); // Give scene a little name
 	this->activeCamera = nullptr; // set active camera to nullptr

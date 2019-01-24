@@ -21,6 +21,11 @@ private:
 	Camera* activeCamera; /// @ brief The currently active camera
 public:
 	/**
+	* Destructor
+	*/
+	~Scene();
+
+	/**
 	* Constructor
 	*/
 	Scene();

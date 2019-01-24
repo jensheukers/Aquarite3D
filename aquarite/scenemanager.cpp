@@ -65,9 +65,9 @@ Scene* SceneManager::GetScene(std::string name) {
 	return SceneManager::GetInstance()->GetScene(SceneManager::GetInstance()->GetSceneIndex(name)); // Return scene
 }
 
-Scene* SceneManager::AddScene(Scene* scene) {
+int SceneManager::AddScene(Scene* scene) {
 	SceneManager::GetInstance()->scenes.push_back(scene); // Add Scene
-	return scene; // Return scene
+	return SceneManager::GetInstance()->scenes.size() - 1; // Return scene
 }
 
 void SceneManager::RemoveScene(int index) {
