@@ -42,6 +42,7 @@ Input* Input::_instance; // Declare static member
 Input* Input::GetInstance() {
 	if (!_instance) {
 		_instance = new Input();
+		_instance->mousePicker = new MousePicker(); // Set mousepicker instance
 	}
 	
 	return _instance;
@@ -58,6 +59,7 @@ void Input::HandleUpdates() {
 	}
 
 	Input::GetInstance()->lastKey = KEYCODE_EMPTY_KEY;
+	Input::GetInstance()->mousePicker->Update(); // Update mouse picker
 }
 
 void Input::Init(GLFWwindow* window) {
@@ -110,4 +112,8 @@ Point2f Input::GetMousePosition() {
 
 int Input::GetLastKey() {
 	return Input::GetInstance()->lastKey;
+}
+
+Vec3 Input::GetMousePositionWorldSpace() {
+	return Input::GetInstance()->mousePicker->GetCurrentRay();
 }

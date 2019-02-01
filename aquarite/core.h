@@ -115,6 +115,11 @@ public:
 	static Point2i GetResolution();
 
 	/**
+	* Gets the current active GLFW window from the renderer then returns
+	*/
+	static GLFWwindow* GetActiveWindow();
+
+	/**
 	* Sets the resolution refernence, method is mostly called by the renderer
 	*/
 	static void SetResolutionReference(Point2i res);
@@ -143,6 +148,16 @@ public:
 	* Returns the framebuffer of the renderer
 	*/
 	static FrameBuffer* GetRendererFrameBuffer();
+
+	/**
+	* Returns the renderer's view matrix
+	*/
+	static glm::mat4 GetRendererViewMatrix();
+
+	/**
+	* Returns the renderer's projection matrix
+	*/
+	static glm::mat4 GetRendererProjectionMatrix();
 };
 
 #endif // !CORE_H

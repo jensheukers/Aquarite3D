@@ -155,6 +155,16 @@ public:
 	SkyBox* GetSkybox();
 
 	/**
+	* Returns the current view matrix
+	*/
+	glm::mat4 GetViewMatrix();
+
+	/**
+	* Returns the current projection matrix
+	*/
+	glm::mat4 GetProjectionMatrix();
+
+	/**
 	* Destructor
 	*/
 	~Renderer();

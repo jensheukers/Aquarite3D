@@ -480,6 +480,14 @@ SkyBox* Renderer::GetSkybox() {
 	return this->skybox;
 }
 
+glm::mat4 Renderer::GetViewMatrix() {
+	return this->view;
+}
+
+glm::mat4 Renderer::GetProjectionMatrix() {
+	return this->projection;
+}
+
 Renderer::~Renderer() {
 	glfwTerminate(); // Terminate GLFW
 	Debug::Log("GLFW Terminated", typeid(*this).name()); // Log

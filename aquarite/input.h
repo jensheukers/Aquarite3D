@@ -10,6 +10,7 @@
 
 //Define Button macros
 #include <GLFW/glfw3.h>
+#include "math/mousepicker.h"
 
 #define		BUTTONCODE_LEFT		0
 #define		BUTTONCODE_RIGHT	1
@@ -161,6 +162,9 @@ private:
 	int lastKey; /// @brief The last key pressed
 
 	Point2f _mousePos; /// @brief Point2 of floats containing Mouse Position
+
+	MousePicker* mousePicker; /// @brief Mousepicker handles screen to world raycasting
+
 	/**
 	* Returns the instance if found, else creates a new instance and returns.
 	*/
@@ -231,6 +235,11 @@ public:
 	* Returns the last key pressed this frame, if there is no key pressed this frame it returns KEYCODE_EMPTY_KEY
 	*/
 	static int GetLastKey();
+
+	/**
+	* Returns the mouse position in world space
+	*/
+	static Vec3 GetMousePositionWorldSpace();
 };
 
 #endif // !INPUT_H

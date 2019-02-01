@@ -211,6 +211,10 @@ Point2i Core::GetResolution() {
 	return Core::GetInstance()->_resolution;
 }
 
+GLFWwindow* Core::GetActiveWindow() {
+	return Core::GetInstance()->renderer->GetWindow();
+}
+
 unsigned Core::GetTimeElapsed() {
 	return Core::GetInstance()->_timeElapsed;
 }
@@ -237,4 +241,12 @@ SkyBox* Core::GetRendererSkybox() {
 
 FrameBuffer* Core::GetRendererFrameBuffer() {
 	return Core::GetInstance()->renderer->GetFrameBuffer();
+}
+
+glm::mat4 Core::GetRendererViewMatrix() {
+	return Core::GetInstance()->renderer->GetViewMatrix();
+}
+
+glm::mat4 Core::GetRendererProjectionMatrix() {
+	return Core::GetInstance()->renderer->GetProjectionMatrix();
 }
