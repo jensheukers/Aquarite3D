@@ -48,6 +48,11 @@ public:
 	* @return Vec3
 	*/
 	Vec3 GetCurrentRay();
+
+	/**
+	* Returns the point of the ray, from the mouse position.
+	*/
+	Vec3 GetPointOnRay(Camera* camera, float distance);
 };
 
 #endif // !MOUSEPICKER_H

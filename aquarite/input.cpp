@@ -117,3 +117,7 @@ int Input::GetLastKey() {
 Vec3 Input::GetMousePositionWorldSpace() {
 	return Input::GetInstance()->mousePicker->GetCurrentRay();
 }
+
+Vec3 Input::GetMouseRayPositionWorldSpace(Camera* camera, float distance) {
+	return Input::GetInstance()->mousePicker->GetPointOnRay(camera, distance);
+}

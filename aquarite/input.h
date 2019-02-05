@@ -240,6 +240,11 @@ public:
 	* Returns the mouse position in world space
 	*/
 	static Vec3 GetMousePositionWorldSpace();
+
+	/**
+	* Returns the coordinated of the mouse position + distance, requires camera as second parameter
+	*/
+	static Vec3 GetMouseRayPositionWorldSpace(Camera* camera, float distance);
 };
 
 #endif // !INPUT_H

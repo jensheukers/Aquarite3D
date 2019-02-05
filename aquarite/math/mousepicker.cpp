@@ -32,7 +32,6 @@ glm::vec3 MousePicker::ToWorldCoords(glm::vec4 eyeCoords) {
 	glm::mat4 invertedView = glm::inverse(Core::GetRendererViewMatrix());
 	glm::vec4 rayWorld = invertedView * eyeCoords;
 	glm::vec3 mouseRay = glm::vec3(rayWorld);
-	glm::normalize(mouseRay);
 	return mouseRay;
 }
 
@@ -42,4 +41,10 @@ void MousePicker::Update() {
 
 Vec3 MousePicker::GetCurrentRay() {
 	return Vec3::ToVec3(currentRay);
+}
+
+Vec3 MousePicker::GetPointOnRay(Camera* camera, float distance) {	
+	glm::vec3 cameraPos = camera->GetPos();
+	glm::vec3 extendedRay = glm::vec3((currentRay.x - cameraPos.x) * distance, (currentRay.y - cameraPos.y) * distance, (currentRay.z - cameraPos.z) * distance);
+	return Vec3::ToVec3(cameraPos + extendedRay);
 }
