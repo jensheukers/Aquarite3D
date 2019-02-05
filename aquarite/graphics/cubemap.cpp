@@ -64,7 +64,7 @@ unsigned int CubeMap::GetCubeMapTexture() {
 }
 
 Texture* CubeMap::GetTexture(int index) {
-	if (this->textures.size() < index) {
+	if (this->textures.size() < (size_t)index) {
 		return nullptr;
 	}
 

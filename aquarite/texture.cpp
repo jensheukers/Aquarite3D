@@ -169,8 +169,8 @@ void Texture::GenerateTexture(int width, int height) {
 	this->textureData->type = GL_RGB;
 
 	//Allocate
-	float imageSize = this->textureData->bytesPerPixel * (width * height);
-	this->textureData->imageData = (GLubyte*)malloc(imageSize); //Allocate memory
+	float imageSize = (float)this->textureData->bytesPerPixel * (width * height);
+	this->textureData->imageData = (GLubyte*)malloc((size_t)imageSize); //Allocate memory
 
 	int bufferSize = (this->textureData->height * this->textureData->width) * this->textureData->bytesPerPixel; // Get the buffer size
 	for (int i = 0; i < bufferSize; i += this->textureData->bytesPerPixel) { // For every pixel
