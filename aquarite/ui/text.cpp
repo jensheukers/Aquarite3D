@@ -37,6 +37,6 @@ void Text::SetText(std::string text) {
 	this->text = text;
 }
 
-std::string Text::GetText() {
+std::string& Text::GetText() {
 	return this->text;
 }

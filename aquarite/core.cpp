@@ -72,6 +72,9 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 		return 1;
 	}
 
+	//Initilialize debug (parse renderer)
+	Debug::Initialize(renderer);
+
 	//Set cursorEnabled to true by default
 	this->cursorEnabled = true;
 
@@ -137,6 +140,7 @@ void Core::HandleUpdates() {
 				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera()); // Normal draw
 			}
 
+			Debug::NewFrame();
 			renderer->Render(SceneManager::GetActiveScene()->GetActiveCamera());
 		}
 	}

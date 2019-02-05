@@ -71,7 +71,7 @@ public:
 	* Returns the text
 	* @return std::string
 	*/
-	std::string GetText();
+	std::string& GetText();
 };
 
 #endif // !TEXT_H
