@@ -30,8 +30,6 @@ int main(int argc, char* argv[]) {
 	
 	Core::SetCursorEnabled(false);
 	
-	UIElement* element = new UIElement();
-
 	while (Core::GetInstance()->Active()) { // While the core is still active
 		camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
 
