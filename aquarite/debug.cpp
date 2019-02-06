@@ -32,15 +32,12 @@ void Debug::Log(std::string string, std::string callerName) {
 	std::cout << Debug::PREFIX << " : " << "~" << callerName.c_str() << "~ " << string.c_str() << std::endl; // Log to console
 }
 
-void Debug::LogScreen(std::string string, std::string callerName) {
+void Debug::LogScreen(std::string string) {
 	Debug::GetInstance()->text->position = Vec3(0, Core::GetResolution().y);
 
 	//Construct string
 	std::string content = Debug::PREFIX;
 	content.append(" : ");
-	content.append("~");
-	content.append(callerName);
-	content.append("~ ");
 	content.append(string);
 
 	Debug::GetInstance()->text->SetColor(Debug::GetInstance()->color);

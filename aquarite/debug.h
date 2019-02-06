@@ -41,7 +41,7 @@ public:
 	/**
 	* Log string to the screen, and not to the console, avoiding the heavy cout call
 	*/
-	static void LogScreen(std::string string, std::string callerName);
+	static void LogScreen(std::string string);
 
 	/**
 	* registers the text to the renderer
