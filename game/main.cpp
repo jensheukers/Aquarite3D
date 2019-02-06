@@ -11,6 +11,7 @@
 #include "../aquarite/debug.h"
 #include "../aquarite/scenemanager.h"
 #include "../aquarite/input.h"
+#include "../aquarite/ui/uielement.h"
 
 int main(int argc, char* argv[]) {
 	Core::GetInstance()->Initialize(argv, Point2i(1280,720)); //Initialize Core
@@ -29,6 +30,8 @@ int main(int argc, char* argv[]) {
 	
 	Core::SetCursorEnabled(false);
 	
+	UIElement* element = new UIElement();
+
 	while (Core::GetInstance()->Active()) { // While the core is still active
 		camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
 

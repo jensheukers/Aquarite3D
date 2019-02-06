@@ -15,6 +15,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "GL/glew.h"
+#include "math/pointx.h"
 
 typedef struct {
 	/** Holds all the color values for the image*/
@@ -110,12 +111,12 @@ public:
 	/**
 	* Set the color of the font
 	*/
-	void SetColor(glm::vec4 color);
+	void SetColor(Point4f color);
 
 	/**
 	* Generates a 24 bit texture buffer
 	*/
-	void GenerateTexture(int width, int height);
+	void GenerateTexture(int width, int height, GLuint type = GL_RGB);
 };
 
 #endif // !TEXTURE_H

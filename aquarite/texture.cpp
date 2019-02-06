@@ -143,30 +143,37 @@ int Texture::GetPixelData(int x, int y, int offset) {
 	return this->textureData->imageData[(width + height) + offset];
 }
 
-void Texture::SetColor(glm::vec4 color) {
+void Texture::SetColor(Point4f color) {
 	int bufferSize = (this->textureData->height * this->textureData->width) * this->textureData->bytesPerPixel; // Get the buffer size
 	for (int i = 0; i < bufferSize; i += this->textureData->bytesPerPixel) { // For every pixel
 		if (this->textureData->imageData[i] == 0 && this->textureData->imageData[i + 1] == 0 && this->textureData->imageData[i + 2] == 0) { // If a pixel has no color
 			continue; //Continue
 		}
 
-		this->textureData->imageData[i] = (GLubyte)color.r; // Set Red
-		this->textureData->imageData[i + 1] = (GLubyte)color.g; // Set Green
-		this->textureData->imageData[i + 2] = (GLubyte)color.b; // Set Blue
+		this->textureData->imageData[i] = (GLubyte)color.x; // Set Red
+		this->textureData->imageData[i + 1] = (GLubyte)color.y; // Set Green
+		this->textureData->imageData[i + 2] = (GLubyte)color.z; // Set Blue
+		
+		if (this->textureData->type == GL_RGBA) {
+			this->textureData->imageData[i + 3] = (GLubyte)color.w; // Set alpha
+		}
 	}
 
 	this->UploadToGPU(); //Re-Upload the texture
 }
 
-void Texture::GenerateTexture(int width, int height) {
+void Texture::GenerateTexture(int width, int height, GLuint type) {
 	this->textureData = new TextureData();
 	
 	//Set some properties
-	this->textureData->bpp = 24;
+	if (type == GL_RGB)
+		this->textureData->bpp = 24; // 3 channels
+	else
+		this->textureData->bpp = 32; // 4 channels
 	this->textureData->width = width;
 	this->textureData->height = height;
 	this->textureData->bytesPerPixel = (this->textureData->bpp / 8);
-	this->textureData->type = GL_RGB;
+	this->textureData->type = type;
 
 	//Allocate
 	float imageSize = (float)this->textureData->bytesPerPixel * (width * height);
@@ -177,6 +184,10 @@ void Texture::GenerateTexture(int width, int height) {
 		this->textureData->imageData[i] = (GLubyte)255; // Set Red
 		this->textureData->imageData[i + 1] = (GLubyte)255; // Set Green
 		this->textureData->imageData[i + 2] = (GLubyte)255; // Set Blue
+
+		if (this->textureData->type == GL_RGBA) {
+			this->textureData->imageData[i + 3] = (GLubyte)255; // Set alpha
+		}
 	}
 
 	this->UploadToGPU(); //Re-Upload the texture
