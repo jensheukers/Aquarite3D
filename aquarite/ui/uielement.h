@@ -29,7 +29,7 @@ protected:
 	* @param camera, The currently active camera
 	* @return void
 	*/
-	void Render(Renderer* renderer, Camera* camera) override;
+	virtual void Render(Renderer* renderer, Camera* camera) override;
 public:
 	/**
 	* Constructor
@@ -104,6 +104,9 @@ class UIInputField : public UIElement {
 private:
 	Text* text; /**< The text element of the input field. */
 	bool typing; /**< True if user is actively typing on the input field*/
+	unsigned int lastTypeTime; /**< The moment last key was typed**/
+protected:
+	void Render(Renderer* renderer, Camera* camera) override;
 public:
 	/**
 	* Constructor
@@ -122,6 +125,11 @@ public:
 	* @return void
 	*/
 	void SetTextInstance(Text* text);
+
+	/**
+	* Sets the bool for typing, if true every key will be processed, Note that Cursor has to be enabled to type
+	*/
+	void AllowTyping(bool state);
 };
 
 #endif // !UIELEMENT_H

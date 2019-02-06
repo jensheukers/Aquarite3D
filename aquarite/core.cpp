@@ -111,9 +111,6 @@ void Core::HandleUpdates() {
 
 	float _localDelta = (float)this->_timeElapsed; // Set local delta to current time elapsed
 
-	//Update Input
-	Input::HandleUpdates();
-
 	//Update Game
 	if (SceneManager::GetActiveScene()) {
 		// Update all entities and their children
@@ -144,6 +141,9 @@ void Core::HandleUpdates() {
 			renderer->Render(SceneManager::GetActiveScene()->GetActiveCamera());
 		}
 	}
+
+	//Update Input
+	Input::HandleUpdates();
 
 	if (!glfwWindowShouldClose(renderer->GetWindow())) { // Check if window should close
 		renderer->SwapBuffers(); // Swap buffers

@@ -2,7 +2,7 @@
 //
 //	Description: Source file for UI element class
 //
-//	Version: 23/1/2019
+//	Version: 6/2/2019
 //
 //	© 2019, Jens Heukers
 #include "../debug.h"
@@ -44,6 +44,15 @@ void UIElement::Update() {
 
 void UIElement::Render(Renderer* renderer, Camera* camera) {
 	renderer->RegisterUIElement(this);
+
+	for (size_t i = 0; i < GetChildren().size(); i++) {
+		//Cast to our type to allow for render call
+		UIElement* element = dynamic_cast<UIElement*>(GetChild(i));
+
+		if (element != NULL) {
+			element->Render(renderer, camera);
+		}
+	}
 }
 
 void UIElement::SetImage(Texture* image) {
@@ -58,11 +67,11 @@ bool UIElement::PointInBounds(Point2f point) {
 	if (this->image == nullptr) return false;
 
 	//Check x component
-	if (point.x < position.x || point.x > position.x + this->image->textureData->width)
+	if (point.x < GetPositionGlobal().x || point.x > GetPositionGlobal().x + this->image->textureData->width)
 		return false;
 
 	//Check y component
-	if (point.y < position.y || point.y > position.y + this->image->textureData->height)
+	if (point.y > GetPositionGlobal().y || point.y < GetPositionGlobal().y - this->image->textureData->height)
 		return false;
 
 	//If cheks are passed return true
@@ -107,9 +116,22 @@ void UIButton::Update() {
 	}
 }
 
+#define NON_ALLOWED_INPUTFIELD_CHARS_SIZE 4
+int nonAllowedInputFieldChars[4] = {
+	KEYCODE_RIGHT_SHIFT,
+	KEYCODE_LEFT_SHIFT,
+	KEYCODE_ENTER,
+	KEYCODE_ESCAPE
+};
+
+void UIInputField::Render(Renderer* renderer, Camera* camera) {
+	renderer->RegisterUIElement(this);
+	renderer->RegisterText(text);
+}
+
 UIInputField::UIInputField() {
 	this->text = nullptr;
-	this->typing = true;
+	this->typing = false;
 }
 
 void UIInputField::Update() {
@@ -117,21 +139,12 @@ void UIInputField::Update() {
 	if (this->image == nullptr) return;
 
 	if (this->text != nullptr) {
-		this->text->position = Vec3(this->position.x, this->position.y + this->GetImage()->textureData->height);
+		this->text->position = Vec3(this->GetPositionGlobal().x, this->GetPositionGlobal().y + this->GetImage()->textureData->height);
 	}
 
 	if (!Core::CursorEnabled()) return;
 
 	if (PointInBounds(Input::GetMousePosition())) {
-		if (Input::GetButtonDown(BUTTONCODE_LEFT)) {
-			if (typing) {
-				typing = false;
-			}
-			else {
-				typing = true;
-			}
-		}
-
 		if (mouseInBoundsLastFrame) {
 			OnStay();
 			mouseInBounds = true;
@@ -155,11 +168,43 @@ void UIInputField::Update() {
 		if (Input::GetLastKey() == KEYCODE_EMPTY_KEY) return;
 
 		//We translate the key press to character
-		if (Input::GetLastKey() != KEYCODE_BACKSPACE) {
-			text->GetText().append((const char*)Input::GetLastKey());
-		}
-		else {
-			text->GetText().erase(text->GetText().begin() + text->GetText().length() - 1);
+		if (lastTypeTime + 150 < Core::GetTimeElapsed()) {
+			if (Input::GetLastKey() != KEYCODE_BACKSPACE) {
+
+				//Check for key combo's
+				if (Input::GetKey(KEYCODE_RIGHT_SHIFT)) {
+					if (Input::GetKeyDown(KEYCODE_9)) {
+						text->GetText().push_back('(');
+					}
+
+					if (Input::GetKeyDown(KEYCODE_0)) {
+						text->GetText().push_back(')');
+					}
+
+					if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
+						text->GetText().push_back('"');
+					}
+				}
+				else {
+					bool falseKeyFound = false;
+
+					for (int i = 0; i < NON_ALLOWED_INPUTFIELD_CHARS_SIZE; i++) {
+						if (nonAllowedInputFieldChars[i] == Input::GetLastKey()) {
+							falseKeyFound = true;
+						}
+					}
+
+					if (!falseKeyFound) {
+						text->GetText().push_back((char)Input::GetLastKey());
+					}
+				}
+			}
+			else {
+				if (text->GetText().length() > 0) {
+					text->GetText().erase(text->GetText().begin() + text->GetText().length() - 1);
+				}
+			}
+			lastTypeTime = Core::GetTimeElapsed();
 		}
 	}
 }
@@ -175,5 +220,9 @@ void UIInputField::SetTextInstance(Text* text) {
 	}
 
 	this->text = text;
-	GetParent()->AddChild(text);
+	this->AddChild(text);
+}
+
+void UIInputField::AllowTyping(bool state) {
+	typing = state;
 }

@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	scene->SetActiveCamera(camera);
 	
 	Core::SetCursorEnabled(false);
-	
+
 	while (Core::GetInstance()->Active()) { // While the core is still active
 		camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
 
