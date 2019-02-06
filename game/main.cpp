@@ -12,6 +12,7 @@
 #include "../aquarite/scenemanager.h"
 #include "../aquarite/input.h"
 #include "../aquarite/graphics/light.h"
+#include "../external/imgui/imgui.h"
 
 int main(int argc, char* argv[]) {
 	Core::GetInstance()->Initialize(argv, Point2i(1280,720)); //Initialize Core
@@ -31,8 +32,6 @@ int main(int argc, char* argv[]) {
 	Core::SetCursorEnabled(false);
 	
 	while (Core::GetInstance()->Active()) { // While the core is still active
-		Core::GetInstance()->HandleUpdates(); // Handle the updates
-
 		camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
 
 		if (Input::GetKey(KEYCODE_W)) {
@@ -54,6 +53,8 @@ int main(int argc, char* argv[]) {
 		if (Input::GetKeyDown(KEYCODE_ESCAPE)) {
 			Core::SetCursorEnabled(true);
 		}
+
+		Core::GetInstance()->HandleUpdates(); // Handle the updates
 	}
 	 // Destroy Core Instance
 	Core::GetInstance()->Destroy();

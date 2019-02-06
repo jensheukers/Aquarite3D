@@ -18,6 +18,9 @@
 #include "graphics/light.h"
 #include "ui/uielement.h"
 #include "ui/text.h"
+#include "../external/imgui/imgui.h"
+#include "../external/imgui/imgui_impl_glfw.h"
+#include "../external/imgui/imgui_impl_opengl3.h"
 
 //Include glText external header file
 #define GLT_IMPLEMENTATION
@@ -319,6 +322,26 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	//Initialize GlText
 	gltInit();
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+	//Start a new IMGUI Frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
 	return 0; // Return 0 (No errors)
 }
 
@@ -380,6 +403,11 @@ void Renderer::Clear() {
 	for (size_t i = 0; i < textList.size(); i++) {
 		textList.erase(textList.begin() + i); // Erase pointer
 	}
+
+	//We start a new imgui frame here so we can draw in between frames
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void Renderer::AddLight(Light* light) {
@@ -466,6 +494,10 @@ void Renderer::Render(Camera* camera) {
 	for (i = 0; i < textList.size(); i++) {
 		DrawText(textList[i]->GetText(), textList[i]->GetColor(), Point2f(textList[i]->position.x, textList[i]->position.y), textList[i]->GetTextScale());
 	}
+
+	//ImGui render
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 GLFWwindow* Renderer::GetWindow() {
@@ -489,6 +521,11 @@ glm::mat4 Renderer::GetProjectionMatrix() {
 }
 
 Renderer::~Renderer() {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(this->window);
 	glfwTerminate(); // Terminate GLFW
 	Debug::Log("GLFW Terminated", typeid(*this).name()); // Log
 }
