@@ -48,6 +48,9 @@ private:
 	unsigned int screenVAO, screenVBO; /// @brief Screen Vertex Array Object, Screen Vertex Buffer Object
 	unsigned int spriteVAO, spriteVBO; /// @brief Sprite VBO and VAO, will be rebuffered each sprite draw, to fit size
 
+	//Booleans
+	bool renderFrameBuffer; /// @brief If true, the frameBuffer will be rendered to screen quad, and displayed
+
 	/**
 	* Returns true if model is indeed inside our frustum
 	*/
@@ -163,6 +166,12 @@ public:
 	* Returns the current projection matrix
 	*/
 	glm::mat4 GetProjectionMatrix();
+
+	/**
+	* Defines if framebuffer should be rendered to screen quad or not, this method is usefull for creating seperate windows 
+	* i.e if user wants the framebuffer drawn to a texture.
+	*/
+	void DrawFrameBufferToScreenObject(bool state);
 
 	/**
 	* Destructor

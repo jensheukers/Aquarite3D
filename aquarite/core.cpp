@@ -254,3 +254,7 @@ glm::mat4 Core::GetRendererViewMatrix() {
 glm::mat4 Core::GetRendererProjectionMatrix() {
 	return Core::GetInstance()->renderer->GetProjectionMatrix();
 }
+
+void Core::SetRendererDrawFrameBufferToScreen(bool state) {
+	Core::GetInstance()->renderer->DrawFrameBufferToScreenObject(state);
+}

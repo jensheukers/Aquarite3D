@@ -342,6 +342,9 @@ int Renderer::Initialize(const char* windowTitle, int width, int height) {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	//Set booleans
+	renderFrameBuffer = true; // Draw frame buffer to screen vao as texture by default
+
 	return 0; // Return 0 (No errors)
 }
 
@@ -477,22 +480,25 @@ void Renderer::Render(Camera* camera) {
 		DrawSprite(uiElementList[i]->GetImage(), uiElementList[i]->GetPositionGlobal(), uiElementList[i]->GetScale());
 	}
 
-	//Unbind framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
-
-	//Disable depth testing (For drawing quad to screen)
+	//Disable depth testing (For drawing quad to screen & drawing text)
 	glDisable(GL_DEPTH_TEST); // Disable depth testing
-
-	glUseProgram(frameBuffer->GetShader()->GetShaderProgram()); // Bind framebuffer shader program
-	glBindVertexArray(screenVAO); // Bind Vertex Array Object
-
-	glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
-	glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 
 	//Draw all texts
 	for (i = 0; i < textList.size(); i++) {
 		DrawText(textList[i]->GetText(), textList[i]->GetColor(), Point2f(textList[i]->position.x, textList[i]->position.y), textList[i]->GetTextScale());
+	}
+
+	//Unbind framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer, so we can draw the framebuffer
+
+	//If we can render our framebuffer to the screen vao
+	if (renderFrameBuffer) {
+		glUseProgram(frameBuffer->GetShader()->GetShaderProgram()); // Bind framebuffer shader program
+		glBindVertexArray(screenVAO); // Bind Vertex Array Object
+
+		glBindTexture(GL_TEXTURE_2D, frameBuffer->GetTextureColorBufferObject()); // Bind framebuffer texture
+		glDrawArrays(GL_TRIANGLES, 0, 6); // Draw quad
 	}
 
 	//ImGui render
@@ -518,6 +524,10 @@ glm::mat4 Renderer::GetViewMatrix() {
 
 glm::mat4 Renderer::GetProjectionMatrix() {
 	return this->projection;
+}
+
+void Renderer::DrawFrameBufferToScreenObject(bool state) {
+	this->renderFrameBuffer = state;
 }
 
 Renderer::~Renderer() {

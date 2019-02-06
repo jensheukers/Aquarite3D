@@ -158,6 +158,11 @@ public:
 	* Returns the renderer's projection matrix
 	*/
 	static glm::mat4 GetRendererProjectionMatrix();
+
+	/**
+	* Defines if the renderer should draw the framebuffer to its screen vertex array object as a texture
+	*/
+	static void SetRendererDrawFrameBufferToScreen(bool state);
 };
 
 #endif // !CORE_H
