@@ -3,20 +3,43 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 23/1/2019
+*	Version: 7/2/2019
 *
 *	© 2018, Jens Heukers
 */
 #include <Windows.h>
 #include <chrono>
-#include "soundmanager.h"
 #include "core.h"
+#include "soundmanager.h"
 #include "scenemanager.h"
 #include "resourcemanager.h"
 #include "input.h"
 #include "debug.h"
 #include "console.h"
+#include "luascript.h"
 
+//Native functions for lua, added by default
+
+//Spawns a entity in the scene, searches model in resourcemanager.
+int SpawnEntity(lua_State* state) {
+	std::string modelName = lua_tostring(state, -4);
+	Vec3 position = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
+
+	if (SceneManager::GetActiveScene()) {
+		Entity* entity = new Entity();
+		entity->SetModel(ResourceManager::GetModel(modelName));
+		entity->position = position;
+		SceneManager::GetActiveScene()->AddChild(entity);
+	}
+
+	return 0;
+}
+
+void AddNativeFunctionsToLuaStack() {
+	LuaScript::AddNativeFunction("SpawnEntity", SpawnEntity);
+}
+
+//Core implementation
 Core* Core::_instance; // Declare static member
 std::string Core::_executablePath; // Declare static member
 
@@ -93,6 +116,9 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 
 	//If debug is on we should initialize the console, for now it is always enabled
 	Console::Initialize();
+
+	//Register default native Lua functions
+	AddNativeFunctionsToLuaStack();
 
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
