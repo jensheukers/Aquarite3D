@@ -14,12 +14,17 @@ class Renderer; // Forward declaration
 
 class Console {
 private:
+	//Pointers
 	static Console* instance; /**< The console instance*/
 	UIElement* console; /**< The console entity*/
 	UIInputField* inputField; /**< The inputfield entity */
 	Text* inputText; /**< Pointer to the current input*/
 	Text* logText; /**< The text displayed in the console*/
+
+	//List / maps
 	std::vector<std::string> logTextLines; /**< list of lines in the log text*/
+
+	//Booleans
 	bool showConsole; /**< Defines if the console should be shown or not*/
 	bool lastCursorState; /**< Remembers the last cursor state*/
 

@@ -43,7 +43,6 @@ void Console::Initialize() {
 
 	//Initialize text
 	Console::GetInstance()->inputText = new Text();
-	Console::GetInstance()->inputText->SetText("test");
 	Console::GetInstance()->inputText->position = Console::GetInstance()->inputField->GetPositionGlobal() + Vec3(0, textBoxBG->textureData->height, 0);
 
 	//Child inputfield
@@ -79,7 +78,8 @@ void Console::Update() {
 
 	if (Input::GetKeyDown(KEYCODE_ENTER)) { // If enter is pressed parse command
 
-		std::string logString = Console::GetInstance()->inputText->GetText();
+
+		std::string logString = "Unknown Command: " + Console::GetInstance()->inputText->GetText();
 
 		//Add line
 		Console::GetInstance()->logTextLines.push_back(logString); // add a line to list

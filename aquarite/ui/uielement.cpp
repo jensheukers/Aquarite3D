@@ -173,17 +173,28 @@ void UIInputField::Update() {
 			if (Input::GetLastKey() != KEYCODE_BACKSPACE) {
 
 				//Check for key combo's
-				if (Input::GetKey(KEYCODE_RIGHT_SHIFT)) {
+				if (Input::GetKey(KEYCODE_RIGHT_SHIFT) || Input::GetKey(KEYCODE_LEFT_SHIFT)) {
 					if (Input::GetKeyDown(KEYCODE_9)) {
 						text->GetText().push_back('(');
 					}
-
-					if (Input::GetKeyDown(KEYCODE_0)) {
+					else if (Input::GetKeyDown(KEYCODE_0)) {
 						text->GetText().push_back(')');
 					}
-
-					if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
+					else if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
 						text->GetText().push_back('"');
+					}
+					else {
+						bool falseKeyFound = false;
+
+						for (int i = 0; i < NON_ALLOWED_INPUTFIELD_CHARS_SIZE; i++) {
+							if (nonAllowedInputFieldChars[i] == Input::GetLastKey()) {
+								falseKeyFound = true;
+							}
+						}
+
+						if (!falseKeyFound) {
+							text->GetText().push_back((char)Input::GetLastKey());
+						}
 					}
 				}
 				else {
