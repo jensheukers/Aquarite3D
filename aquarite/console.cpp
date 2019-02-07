@@ -15,7 +15,7 @@
 //Default Console Commands
 //Set a value in lua
 std::string Set(std::string value) {
-	LuaScript::Run(value);
+	int error = LuaScript::Run(value);
 	return "Lua: " + value;
 }
 
@@ -24,9 +24,12 @@ std::string Get(std::string value) {
 	int type = LuaScript::GetType(value);
 
 	switch (type) {
-	case LUA_TNUMBER:
-		return "Lua: " + std::to_string(LuaScript::GetNumber(value));
-		break;
+		case LUA_TNUMBER:
+			return "Lua: " + std::to_string(LuaScript::GetNumber(value));
+			break;
+		case LUA_TSTRING:
+			return "Lua: " + LuaScript::GetString(value);
+			break;
 	}
 
 	return "Lua: Cannot determine type";
@@ -120,7 +123,10 @@ void Console::Update() {
 		std::string value = "";
 
 		for (size_t i = 1; i < segments.size(); i++) {
-			value.append(segments[i]);
+			if (i != segments.size() - 1)
+				value.append(segments[i] + " "); // Since we split at space also re-add a space
+			else
+				value.append(segments[i]); // If last then just add segment
 		}
 
 		//Find command in commands list, then execute function pointer and set logscreen as result
@@ -161,4 +167,8 @@ void Console::Render(Renderer* renderer) {
 
 void Console::AddCommand(std::string name, std::string(*callback_func)(std::string)) {
 	Console::GetInstance()->commands[name] = callback_func;
+}
+
+void Console::Log(std::string value) {
+	Console::GetInstance()->logTextLines.push_back(value + "\n"); // add a line to list
 }

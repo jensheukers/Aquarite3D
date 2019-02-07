@@ -19,8 +19,8 @@ LuaScript::LuaScript() {
 	this->state = luaL_newstate(); // Create a new lua state
 }
 
-void LuaScript::Run(std::string script) {
-	luaL_dostring(LuaScript::GetInstance()->state, script.c_str());
+int LuaScript::Run(std::string script) {
+	return luaL_dostring(LuaScript::GetInstance()->state, script.c_str());
 }
 
 int LuaScript::GetType(std::string variableName) {
@@ -39,10 +39,26 @@ int LuaScript::GetNumber(std::string variableName) {
 	int type = lua_type(LuaScript::GetInstance()->state, -1);
 	
 	if (type == LUA_TNUMBER) {
-		return lua_tonumber(LuaScript::GetInstance()->state, -1);
+		return (int)lua_tonumber(LuaScript::GetInstance()->state, -1);
 	}
 	else {
-		Debug::LogScreen("Variable is not a number!");
+		Debug::LogScreen("Lua: Variable is not a number!");
+		return 0;
+	}
+}
+
+std::string LuaScript::GetString(std::string variableName) {
+	//Push to top of stack
+	lua_getglobal(LuaScript::GetInstance()->state, variableName.c_str());
+
+	//Determine type of last pushed value
+	int type = lua_type(LuaScript::GetInstance()->state, -1);
+
+	if (type == LUA_TSTRING) {
+		return lua_tostring(LuaScript::GetInstance()->state, -1);
+	}
+	else {
+		Debug::LogScreen("Lua: Variable is not a string!");
 		return 0;
 	}
 }

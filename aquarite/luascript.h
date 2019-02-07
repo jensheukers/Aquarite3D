@@ -30,8 +30,9 @@ public:
 	/**
 	* Runs a script to lua.
 	* @param script, The script to execute
+	* @return int, Returns int for error checking
 	*/
-	static void Run(std::string script);
+	static int Run(std::string script);
 
 	/**
 	* Determines type of variable then returns type as a int
@@ -46,6 +47,13 @@ public:
 	* @return int, The value returned by lua.
 	*/
 	static int GetNumber(std::string variableName);
+
+	/**
+	* Gets the global variable specified as parameter, pushes to the stack then returns string if checks are passed.
+	* @param variableName, The name of the variable
+	* @return std::string, The value returned by lua.
+	*/
+	static std::string GetString(std::string variableName);
 
 	/**
 	* Destructor

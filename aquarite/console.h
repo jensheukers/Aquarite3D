@@ -58,6 +58,12 @@ public:
 	* @param std::string(*)(std::string), Function pointer to method to run when called
 	*/
 	static void AddCommand(std::string name, std::string(*callback_func)(std::string));
+
+	/**
+	* Prints a string to the console
+	* @param std::string, the string to print
+	*/
+	static void Log(std::string value);
 };
 
 #endif // !CONSOLE_H
