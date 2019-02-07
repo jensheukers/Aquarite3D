@@ -62,7 +62,7 @@ Console* Console::GetInstance() {
 		instance = new Console();
 	}
 
-	return instance;	
+	return instance;
 }
 
 void Console::Initialize() {
@@ -102,7 +102,7 @@ void Console::Initialize() {
 	Console::GetInstance()->console->AddChild(Console::GetInstance()->logText);
 
 	Console::GetInstance()->showConsole = false;
-	
+
 	//Add default commands
 	Console::AddCommand("set", Set);
 	Console::AddCommand("get", Get);
@@ -126,7 +126,18 @@ void Console::Update() {
 		Console::GetInstance()->inputField->Update(); // Update input field
 	}
 
+	if (Input::GetKeyDown(KEYCODE_UP)) {
+		if ((Console::GetInstance()->history.size() - 1) - Console::GetInstance()->historyIndex != -1) {
+			Console::GetInstance()->inputText->SetText(Console::GetInstance()->history[(Console::GetInstance()->history.size() - 1) - Console::GetInstance()->historyIndex]);
+			Console::GetInstance()->historyIndex++;
+		}
+	}
+
 	if (Input::GetKeyDown(KEYCODE_ENTER)) { // If enter is pressed parse command
+		//Add to history
+		Console::GetInstance()->history.push_back(Console::GetInstance()->inputText->GetText());
+		Console::GetInstance()->historyIndex = 0;
+
 		//First split the input line string
 		std::stringstream ss(Console::GetInstance()->inputText->GetText());
 		std::string segment;
@@ -157,13 +168,13 @@ void Console::Update() {
 		//Add line
 		Console::GetInstance()->logTextLines.push_back(logString + "\n"); // add a line to list
 
-		//Check if we dont exceed max log size of 20
-		if (Console::GetInstance()->logTextLines.size() > 20) {
-			Console::GetInstance()->logTextLines.erase(Console::GetInstance()->logTextLines.begin());
-		}
-
 		//Clear input field
 		Console::GetInstance()->inputText->SetText("");
+	}
+
+	//Check if we dont exceed max log size of 20
+	if (Console::GetInstance()->logTextLines.size() > 20) {
+		Console::GetInstance()->logTextLines.erase(Console::GetInstance()->logTextLines.begin());
 	}
 }
 

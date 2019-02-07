@@ -47,6 +47,11 @@ std::string LuaScript::RunFunction(std::string file, std::string function, std::
 	}
 }
 
+void LuaScript::AddNativeFunction(std::string name, int(*func_pointer)(lua_State*)) {
+	lua_pushcfunction(LuaScript::GetInstance()->state, func_pointer);
+	lua_setglobal(LuaScript::GetInstance()->state, name.c_str());
+}
+
 int LuaScript::GetType(std::string variableName) {
 	//Push to top of stack
 	lua_getglobal(LuaScript::GetInstance()->state, variableName.c_str());

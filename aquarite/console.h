@@ -23,7 +23,11 @@ private:
 
 	//List / maps
 	std::vector<std::string> logTextLines; /**< list of lines in the log text*/
+	std::vector<std::string> history; /**< History of executed commands*/
 	std::map<std::string, std::string(*)(std::string)> commands; /**< List of commands, holding as function pointers as value*/
+
+	//Ints
+	int historyIndex; /**< Index of the currently browsing history*/
 
 	//Booleans
 	bool showConsole; /**< Defines if the console should be shown or not*/

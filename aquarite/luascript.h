@@ -44,6 +44,13 @@ public:
 	static std::string RunFunction(std::string file , std::string function, std::vector<std::string> arguments);
 
 	/**
+	* Adds a native C Function to lua stack.
+	* @param name, The name of the function
+	* @param function, The pointer to the function, Function should return string to lua, and have the state as parameter
+	*/
+	static void AddNativeFunction(std::string name, int(*func_pointer)(lua_State*));
+
+	/**
 	* Determines type of variable then returns type as a int
 	* @param variableName, The name of the variable
 	* @return int, variable Type enum
