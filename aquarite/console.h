@@ -23,6 +23,7 @@ private:
 
 	//List / maps
 	std::vector<std::string> logTextLines; /**< list of lines in the log text*/
+	std::map<std::string, std::string(*)(std::string)> commands; /**< List of commands, holding as function pointers as value*/
 
 	//Booleans
 	bool showConsole; /**< Defines if the console should be shown or not*/
@@ -47,8 +48,16 @@ public:
 
 	/**
 	* Handles rendering for the console, since we do not want the console to be a child of any scene, but a global entity
+	* @param Renderer, the renderer instance
 	*/
 	static void Render(Renderer* renderer);
+
+	/**
+	* Adds a command to the command's list.
+	* @param std::string, Name of the command
+	* @param std::string(*)(std::string), Function pointer to method to run when called
+	*/
+	static void AddCommand(std::string name, std::string(*callback_func)(std::string));
 };
 
 #endif // !CONSOLE_H
