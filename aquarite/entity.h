@@ -99,9 +99,14 @@ public:
 	void Translate(Vec3 amount);
 
 	/**
-	* Get the global rotation of the entity, note that this position cannot and should not be modified!
+	* Get the global rotation of the entity
 	*/
 	Vec3 GetPositionGlobal();
+
+	/**
+	* Sets the global position of the entity
+	*/
+	void SetPositionGlobal(Vec3 pos);
 
 	/**
 	* Sets the local rotation of the entity

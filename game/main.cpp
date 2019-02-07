@@ -31,28 +31,30 @@ int main(int argc, char* argv[]) {
 	Core::SetCursorEnabled(false);
 
 	while (Core::GetInstance()->Active()) { // While the core is still active
-		camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
+		if (!Core::CursorEnabled()) {
+			camera->OnMouseMovement(Input::GetMousePosition().x, Input::GetMousePosition().y);
 
-		if (Input::GetKey(KEYCODE_W)) {
-			camera->Move(CameraDirection::Forward, Core::GetDeltaTime() * 5);
+			if (Input::GetKey(KEYCODE_W)) {
+				camera->Move(CameraDirection::Forward, Core::GetDeltaTime() * 5);
+			}
+
+			if (Input::GetKey(KEYCODE_S)) {
+				camera->Move(CameraDirection::Backward, Core::GetDeltaTime() * 5);
+			}
+
+			if (Input::GetKey(KEYCODE_A)) {
+				camera->Move(CameraDirection::Left, Core::GetDeltaTime() * 5);
+			}
+
+			if (Input::GetKey(KEYCODE_D)) {
+				camera->Move(CameraDirection::Right, Core::GetDeltaTime() * 5);
+			}
+
+			if (Input::GetKeyDown(KEYCODE_ESCAPE)) {
+				Core::SetCursorEnabled(true);
+			}
 		}
-
-		if (Input::GetKey(KEYCODE_S)) {
-			camera->Move(CameraDirection::Backward, Core::GetDeltaTime() * 5);
-		}
-
-		if (Input::GetKey(KEYCODE_A)) {
-			camera->Move(CameraDirection::Left, Core::GetDeltaTime() * 5);
-		}
-
-		if (Input::GetKey(KEYCODE_D)) {
-			camera->Move(CameraDirection::Right, Core::GetDeltaTime() * 5);
-		}
-
-		if (Input::GetKeyDown(KEYCODE_ESCAPE)) {
-			Core::SetCursorEnabled(true);
-		}
-
+	
 		Core::GetInstance()->HandleUpdates(); // Handle the updates
 	}
 	 // Destroy Core Instance

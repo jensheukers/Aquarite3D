@@ -115,6 +115,10 @@ Vec3 Entity::GetPositionGlobal() {
 	return this->globalPosition; // Return global position
 }
 
+void Entity::SetPositionGlobal(Vec3 pos) {
+	this->globalPosition = pos;
+}
+
 void Entity::SetRotation(Vec3 rotation) {
 	//Regular checks
 	if (rotation.x > 360) {

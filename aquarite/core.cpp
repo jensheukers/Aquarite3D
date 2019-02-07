@@ -15,6 +15,7 @@
 #include "resourcemanager.h"
 #include "input.h"
 #include "debug.h"
+#include "console.h"
 
 Core* Core::_instance; // Declare static member
 std::string Core::_executablePath; // Declare static member
@@ -90,6 +91,9 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 	// Initialize SoundManager, (if end user has not done it yet)
 	SoundManager::Init();
 
+	//If debug is on we should initialize the console, for now it is always enabled
+	Console::Initialize();
+
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
 	return 0;
@@ -136,6 +140,10 @@ void Core::HandleUpdates() {
 				SceneManager::GetActiveScene()->UpdateSceneChildren();
 				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera()); // Normal draw
 			}
+
+			//Console is temporary always enabled
+			Console::Update();
+			Console::Render(renderer);
 
 			Debug::NewFrame();
 			renderer->Render(SceneManager::GetActiveScene()->GetActiveCamera());
