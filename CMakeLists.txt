@@ -9,7 +9,8 @@ file(GLOB MAIN "aquarite/*.cpp" "aquarite/*.h" )
 file(GLOB MATH "aquarite/math/*.cpp" "aquarite/math/*.h")
 file(GLOB GRAPHICS "aquarite/graphics/*.cpp" "aquarite/graphics/*.h")
 file(GLOB UI "aquarite/ui/*.cpp" "aquarite/ui/*.h")
-file(GLOB GAME "game/*.cpp" "game/*.h") 
+file(GLOB GAME "game/*.cpp" "game/*.h")
+file(GLOB IMGUI "external/imgui/*.cpp" "external/imgui/*.h") 
 
 # Includes
 set(GLFW_DIR "external/glfw")
@@ -18,20 +19,21 @@ set(GLM_DIR "external/glm")
 set(OPENAL_DIR "external/openal")
 set(ALUT_DIR "external/alut")
 set(VORBIS_DIR "external/oggvorbis")
+set(LUA_DIR "external/lua")
 
-include_directories(${GLFW_DIR}/include ${GLEW_DIR}/include ${GLM_DIR} ${OPENAL_DIR}/include ${VORBIS_DIR}/include)
+include_directories(${GLFW_DIR}/include ${GLEW_DIR}/include ${GLM_DIR} ${OPENAL_DIR}/include ${VORBIS_DIR}/include ${LUA_DIR}/include)
 link_directories(${GLFW_DIR}/lib-vc2015 ${GLEW_DIR}/lib/Win32 ${OPENAL_DIR}/libs/Win32
-				 ${VORBIS_DIR}/lib/Win32)
+				 ${VORBIS_DIR}/lib/Win32 ${LUA_DIR}/lib)
 
 # Add Executable
 
-add_executable(Aquarite3D ${MAIN} ${MATH} ${GRAPHICS} ${UI} ${GAME})
+add_executable(Aquarite3D ${MAIN} ${MATH} ${GRAPHICS} ${UI} ${GAME} ${IMGUI})
 
 set(CMAKE_CXX_FLAGS_RELEASE "/MD")
 set(CMAKE_CXX_FLAGS_DEBUG "/MD")
 
 # Link libraries
-target_link_libraries(Aquarite3D glfw3.lib glfw3dll.lib opengl32.lib glew32.lib glew32s.lib OpenAL32.lib libogg.lib libvorbis.lib libvorbisfile.lib)
+target_link_libraries(Aquarite3D glfw3.lib glfw3dll.lib opengl32.lib glew32.lib glew32s.lib OpenAL32.lib libogg.lib libvorbis.lib libvorbisfile.lib luaLib.lib)
 SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
 SET (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
 SET (CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
@@ -75,7 +77,4 @@ source_group("math" FILES ${MATH})
 source_group("graphics" FILES ${GRAPHICS})
 source_group("ui" FILES ${UI})
 source_group("game" FILES ${GAME})
-
-
-
-
+source_group("imgui" FILES ${IMGUI})
