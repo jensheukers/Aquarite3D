@@ -6,6 +6,7 @@
 #ifndef LUASCRIPT_H
 #define LUASCRIPT_H
 #include <string>
+#include <vector>
 #include "lua.hpp"
 
 /**
@@ -33,6 +34,14 @@ public:
 	* @return int, Returns int for error checking
 	*/
 	static int Run(std::string script);
+
+	/**
+	* Runs a function in lua.
+	* @param file, The script to execute
+	* @param function, The function to execute
+	* @return std::string, value as a string type
+	*/
+	static std::string RunFunction(std::string file , std::string function, std::vector<std::string> arguments);
 
 	/**
 	* Determines type of variable then returns type as a int

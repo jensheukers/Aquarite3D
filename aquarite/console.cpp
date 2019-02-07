@@ -35,7 +35,25 @@ std::string Get(std::string value) {
 	return "Lua: Cannot determine type";
 }
 
+//Runs a function in lua
+std::string Run(std::string value) {
+	//Split value
+	std::stringstream ss(value);
+	std::string segment;
+	std::vector<std::string> segments;
+	while (std::getline(ss, segment, ' ')) { // Split by space character
+		segments.push_back(segment);
+	}
 
+	std::vector<std::string> arguments;
+	for (size_t i = 2; i < segments.size(); i++) {
+		arguments.push_back(segments[i]);
+	}
+	if (segments.size() > 1) {
+		return LuaScript::RunFunction(segments[0], segments[1], arguments);
+	}
+	return "Lua: No Function Specified!";
+}
 
 Console* Console::instance; // Console singleton instance
 
@@ -88,6 +106,7 @@ void Console::Initialize() {
 	//Add default commands
 	Console::AddCommand("set", Set);
 	Console::AddCommand("get", Get);
+	Console::AddCommand("run", Run);
 }
 
 void Console::Update() {

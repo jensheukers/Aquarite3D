@@ -116,13 +116,17 @@ void UIButton::Update() {
 	}
 }
 
-#define NON_ALLOWED_INPUTFIELD_CHARS_SIZE 5
+#define NON_ALLOWED_INPUTFIELD_CHARS_SIZE 9
 int nonAllowedInputFieldChars[NON_ALLOWED_INPUTFIELD_CHARS_SIZE] = {
 	KEYCODE_RIGHT_SHIFT,
 	KEYCODE_LEFT_SHIFT,
 	KEYCODE_ENTER,
 	KEYCODE_ESCAPE,
-	KEYCODE_GRAVE_ACCENT
+	KEYCODE_GRAVE_ACCENT,
+	KEYCODE_LEFT,
+	KEYCODE_RIGHT,
+	KEYCODE_UP,
+	KEYCODE_DOWN
 };
 
 void UIInputField::Render(Renderer* renderer, Camera* camera) {
@@ -182,6 +186,9 @@ void UIInputField::Update() {
 					}
 					else if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
 						text->GetText().push_back('"');
+					}
+					else if (Input::GetKeyDown(KEYCODE_EQUAL)) {
+						text->GetText().push_back('+');
 					}
 					else {
 						bool falseKeyFound = false;

@@ -5,6 +5,7 @@
 //	© 2019, Jens Heukers
 #include "luascript.h"
 #include "debug.h"
+#include "core.h"
 
 LuaScript* LuaScript::instance; // Pointer to instance
 
@@ -21,6 +22,29 @@ LuaScript::LuaScript() {
 
 int LuaScript::Run(std::string script) {
 	return luaL_dostring(LuaScript::GetInstance()->state, script.c_str());
+}
+
+std::string LuaScript::RunFunction(std::string file, std::string function, std::vector<std::string> arguments) {
+	std::string absolutePath = Core::GetBuildDirectory();
+	absolutePath.append(file);
+
+	if (luaL_dofile(LuaScript::GetInstance()->state, absolutePath.c_str()) != LUA_OK) {
+		return "Lua: Error opening file";
+	}
+
+	lua_getglobal(LuaScript::GetInstance()->state, function.c_str());
+
+	if (lua_isfunction(LuaScript::GetInstance()->state, -1)) {
+		for (size_t i = 0; i < arguments.size(); i++) {
+			lua_pushstring(LuaScript::GetInstance()->state, arguments[i].c_str());
+		}
+		size_t num_args = arguments.size();
+		lua_pcall(LuaScript::GetInstance()->state, num_args, 1, 0); // We expect 1 return
+		return lua_tostring(LuaScript::GetInstance()->state, -1);
+	}
+	else {
+		return "Lua: " + function + " Is not a function";
+	}
 }
 
 int LuaScript::GetType(std::string variableName) {
