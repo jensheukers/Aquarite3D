@@ -139,6 +139,21 @@ int Lua__GetCameraPos(lua_State* state) {
 	return 0; // We can return
 }
 
+//Set the target position
+int Lua_SetCameraTargetPos(lua_State* state) {
+	float x = (float)lua_tonumber(state, -3);
+	float y = (float)lua_tonumber(state, -2);
+	float z = (float)lua_tonumber(state, -1);
+
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->SetTarget(glm::vec3(x, y, z)); // Set position
+		}
+	}
+
+	return 0;
+}
+
 //Sets the current active camera target position from lua, if there is a active scene and a camera
 int Lua_SetCameraPitch(lua_State* state) {
 	float pitch = (float)lua_tonumber(state, -1);
@@ -165,6 +180,17 @@ int Lua_SetCameraYaw(lua_State* state) {
 	return 0;
 }
 
+//Sets the lookAtTarget boolean of the camera
+int Lua_SetCameraLookAtTarget(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->lookAtTarget = lua_toboolean(state, -1); // set bool
+		}
+	}
+
+	return 0;
+}
+
 void AddNativeFunctionsToLuaStack() {
 	LuaScript::AddNativeFunction("Spawn", Spawn);
 	LuaScript::AddNativeFunction("Run", Run);
@@ -174,8 +200,10 @@ void AddNativeFunctionsToLuaStack() {
 	LuaScript::AddNativeFunction("SpawnEntity", Lua_SpawnEntity);
 	LuaScript::AddNativeFunction("SetCameraPos", Lua_SetCameraPos);
 	LuaScript::AddNativeFunction("GetCameraPos", Lua__GetCameraPos);
+	LuaScript::AddNativeFunction("SetCameraTargetPos", Lua_SetCameraTargetPos);
 	LuaScript::AddNativeFunction("SetCameraPitch", Lua_SetCameraPitch);
 	LuaScript::AddNativeFunction("SetCameraYaw", Lua_SetCameraYaw);
+	LuaScript::AddNativeFunction("CameraLookAtTarget", Lua_SetCameraLookAtTarget);
 }
 
 /**

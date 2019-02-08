@@ -3,7 +3,7 @@
 *
 *	Description: Header file for Camera class.
 *
-*	Version: 13/1/2019
+*	Version: 8/2/2019
 *
 *	© 2018, Jens Heukers
 */
@@ -73,12 +73,12 @@ protected:
 	glm::vec3 pos; /// @brief The camera position in world space
 	glm::vec3 target; /// @brief The camera target
 	glm::vec3 up; /// @brief The camera up vector
+public:
+	bool lookAtTarget; /// @brief If true, camera will not update target but set focus to it
 
 	/**
-	* Set the front of the camera (direction)
+	* Constructor
 	*/
-	void SetTarget(glm::vec3 targetPos);
-public:
 	Camera();
 
 	/**
@@ -120,6 +120,11 @@ public:
 	* Get the position of the camera
 	*/
 	glm::vec3 GetPos();
+
+	/**
+	* Set the front of the camera (direction)
+	*/
+	void SetTarget(glm::vec3 targetPos);
 
 	/**
 	* Returns the front of the camera (direction)

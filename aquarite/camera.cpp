@@ -159,6 +159,8 @@ Frustum* Camera::GetFrustum() {
 }
 
 void Camera::UpdateFront() {
+	if (lookAtTarget) return;
+
 	if (yaw > 360) {
 		yaw = 0;
 	}
