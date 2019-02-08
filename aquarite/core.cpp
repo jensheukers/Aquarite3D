@@ -58,6 +58,11 @@ std::string Spawn(std::string value) {
 	Core::RegisterThread(thread); // Launch thread, and register
 	return "Spawned new thread";
 }
+
+std::string DThread(std::string value) {
+	return Core::DestroyThread(std::stoi(value));
+}
+
 //Native functions for lua, added by default
 
 int Run(lua_State* state) {
@@ -71,8 +76,27 @@ int Spawn(lua_State* state) {
 	return 0; // Return 0 because spawn does not return any value
 }
 
+//Prints to console from lua
+int Lua_ConsoleLog(lua_State* state) {
+	Console::Log(lua_tostring(state, -1));
+	return 0; // Return nothing
+}
+
+//Returns the Core deltatime to Lua
+int Lua_GetDeltaTime(lua_State* state) {
+	lua_pushnumber(state, Core::GetDeltaTime()); // Push deltatime to stack
+	return 1;
+}
+
+//Returns the time elapsed to Lua
+int Lua_GetTimeElapsed(lua_State* state) {
+	lua_pushnumber(state, Core::GetTimeElapsed()); // Push deltatime to stack
+	return 1;
+}
+
+
 //Spawns a entity in the scene, searches model in resourcemanager.
-int SpawnEntity(lua_State* state) {
+int Lua_SpawnEntity(lua_State* state) {
 	std::string modelName = lua_tostring(state, -4);
 	Vec3 position = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
 
@@ -86,11 +110,77 @@ int SpawnEntity(lua_State* state) {
 	return 0;
 }
 
+//Sets the current active camera position from lua, if there is a active scene and a camera
+int Lua_SetCameraPos(lua_State* state) {
+	float x = (float)lua_tonumber(state, -3);
+	float y = (float)lua_tonumber(state, -2);
+	float z = (float)lua_tonumber(state, -1);
+
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->SetPos(glm::vec3(x,y,z)); // Set position
+		}
+	}
+
+	return 0;
+}
+
+//Returns the camera position to lua
+int Lua__GetCameraPos(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			Vec3 camPos = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos());
+			lua_pushnumber(state, camPos.x);
+			lua_pushnumber(state, camPos.y);
+			lua_pushnumber(state, camPos.z);
+			return 3; // We pushed 3 values on the stack
+		}
+	}
+	return 0; // We can return
+}
+
+//Sets the current active camera target position from lua, if there is a active scene and a camera
+int Lua_SetCameraPitch(lua_State* state) {
+	float pitch = (float)lua_tonumber(state, -1);
+
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->SetPitch(pitch); // Set position
+		}
+	}
+
+	return 0;
+}
+
+//Sets the current active camera target position from lua, if there is a active scene and a camera
+int Lua_SetCameraYaw(lua_State* state) {
+	float yaw = (float)lua_tonumber(state, -1);
+
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			SceneManager::GetActiveScene()->GetActiveCamera()->SetYaw(yaw); // Set position
+		}
+	}
+
+	return 0;
+}
+
 void AddNativeFunctionsToLuaStack() {
-	LuaScript::AddNativeFunction("SpawnEntity", SpawnEntity);
 	LuaScript::AddNativeFunction("Spawn", Spawn);
 	LuaScript::AddNativeFunction("Run", Run);
+	LuaScript::AddNativeFunction("ConsoleLog", Lua_ConsoleLog);
+	LuaScript::AddNativeFunction("GetDeltaTime", Lua_GetDeltaTime);
+	LuaScript::AddNativeFunction("GetTimeElapsed", Lua_GetTimeElapsed);
+	LuaScript::AddNativeFunction("SpawnEntity", Lua_SpawnEntity);
+	LuaScript::AddNativeFunction("SetCameraPos", Lua_SetCameraPos);
+	LuaScript::AddNativeFunction("GetCameraPos", Lua__GetCameraPos);
+	LuaScript::AddNativeFunction("SetCameraPitch", Lua_SetCameraPitch);
+	LuaScript::AddNativeFunction("SetCameraYaw", Lua_SetCameraYaw);
 }
+
+/**
+* Main core implementation down here, all methods above are methods that should be able to be called by LUA
+*/
 
 //Core implementation
 Core* Core::_instance; // Declare static member
@@ -176,6 +266,7 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 	//Add Run / Spawn to console
 	Console::AddCommand("run", Run);
 	Console::AddCommand("spawn", Spawn);
+	Console::AddCommand("destroy", DThread);
 
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
@@ -205,6 +296,7 @@ void Core::HandleUpdates() {
 			
 			delete threads[t];
 			threads.erase(threads.begin() + t);
+			Console::Log("Thread Stopped");
 		}
 	}
 
@@ -362,4 +454,15 @@ void Core::SetRendererDrawFrameBufferToScreen(bool state) {
 
 void Core::RegisterThread(Thread* thread) {
 	Core::GetInstance()->threads.push_back(thread);
+}
+
+std::string Core::DestroyThread(int index) {
+	for (size_t t = 0; t < Core::GetInstance()->threads.size(); t++) {
+		if (t == index) {
+			Core::GetInstance()->threads[t]->isDone = true;
+			return "Marked thread as done";
+		}
+	}
+
+	return "Could not find thread";
 }

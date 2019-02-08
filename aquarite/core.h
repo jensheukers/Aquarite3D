@@ -180,6 +180,11 @@ public:
 	* Registers a new thread to keep hold of
 	*/
 	static void RegisterThread(Thread* thread);
+
+	/**
+	* Destroys the thread where index matches, returns string with info
+	*/
+	static std::string DestroyThread(int index);
 };
 
 #endif // !CORE_H
