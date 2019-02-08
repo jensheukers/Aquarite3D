@@ -11,9 +11,18 @@
 #ifndef CORE_H
 #define CORE_H
 #include <iostream>
+#include <thread>
 #include <string>
 #include "math/pointx.h"
 #include "renderer.h"
+
+/**
+* Thread struct, holds a extra boolean, so we can check if execution is done
+*/
+struct Thread {
+	std::thread thread; /**< Pointer to the thread*/
+	bool isDone; /**< Boolean if true thread is done executing*/
+};
 
 class Core {
 private:
@@ -43,6 +52,9 @@ private:
 
 	//Cursor state
 	bool cursorEnabled; /// @brief true if cursor is enabled
+
+	//List of threads, we check each frame if a thread has done its execution, so we can end it
+	std::vector<Thread*> threads; /**< List of activly running threads*/
 
 public:
 	//Static methods
@@ -163,6 +175,11 @@ public:
 	* Defines if the renderer should draw the framebuffer to its screen vertex array object as a texture
 	*/
 	static void SetRendererDrawFrameBufferToScreen(bool state);
+
+	/**
+	* Registers a new thread to keep hold of
+	*/
+	static void RegisterThread(Thread* thread);
 };
 
 #endif // !CORE_H

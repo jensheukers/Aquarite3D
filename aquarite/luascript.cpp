@@ -40,7 +40,9 @@ std::string LuaScript::RunFunction(std::string file, std::string function, std::
 		}
 		size_t num_args = arguments.size();
 		lua_pcall(LuaScript::GetInstance()->state, num_args, 1, 0); // We expect 1 return
-		return lua_tostring(LuaScript::GetInstance()->state, -1);
+		std::string luaReturn = "Lua: ";
+		luaReturn.append(lua_tostring(LuaScript::GetInstance()->state, -1)); // Get return value from lua
+		return luaReturn;
 	}
 	else {
 		return "Lua: " + function + " Is not a function";

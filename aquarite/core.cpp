@@ -9,6 +9,7 @@
 */
 #include <Windows.h>
 #include <chrono>
+#include <sstream>
 #include "core.h"
 #include "soundmanager.h"
 #include "scenemanager.h"
@@ -18,7 +19,57 @@
 #include "console.h"
 #include "luascript.h"
 
+//Native functions for console and lua, these include Run and Spawn, Running a method means running it on this thread,
+// We only continue computing if return value is evaluated. If a lua script is spawned, it will be executed on a different
+// thread allowing for further computation while the lua script is ran
+//Runs a function in lua
+
+//Run a function in lua
+std::string Run(std::string value) {
+	//Split value
+	std::stringstream ss(value);
+	std::string segment;
+	std::vector<std::string> segments;
+	while (std::getline(ss, segment, ' ')) { // Split by space character
+		segments.push_back(segment);
+	}
+
+	std::vector<std::string> arguments;
+	for (size_t i = 2; i < segments.size(); i++) {
+		arguments.push_back(segments[i]);
+	}
+	if (segments.size() > 1) {
+		return LuaScript::RunFunction(segments[0], segments[1], arguments);
+	}
+	return "Lua: No Function Specified!";
+}
+
+//We call this function to run threads, we pass state boolean as a reference
+void RunThread(std::string value, bool& state) {
+	Console::Log(Run(value)); // We run the code
+	state = true; // If we get here we know that thread is done running
+}
+
+std::string Spawn(std::string value) {
+	Thread* thread = new Thread();
+	thread->isDone = false;
+	thread->thread = std::thread(RunThread, value, std::ref(thread->isDone));
+
+	Core::RegisterThread(thread); // Launch thread, and register
+	return "Spawned new thread";
+}
 //Native functions for lua, added by default
+
+int Run(lua_State* state) {
+	std::string returnValue = Run(lua_tostring(state, -1));
+	lua_pushstring(state, returnValue.c_str());
+	return 1; // We have pushed 1 value on the lua stack
+}
+
+int Spawn(lua_State* state) {
+	Spawn(lua_tostring(state, -1)); // Call spawn function
+	return 0; // Return 0 because spawn does not return any value
+}
 
 //Spawns a entity in the scene, searches model in resourcemanager.
 int SpawnEntity(lua_State* state) {
@@ -37,6 +88,8 @@ int SpawnEntity(lua_State* state) {
 
 void AddNativeFunctionsToLuaStack() {
 	LuaScript::AddNativeFunction("SpawnEntity", SpawnEntity);
+	LuaScript::AddNativeFunction("Spawn", Spawn);
+	LuaScript::AddNativeFunction("Run", Run);
 }
 
 //Core implementation
@@ -120,6 +173,10 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 	//Register default native Lua functions
 	AddNativeFunctionsToLuaStack();
 
+	//Add Run / Spawn to console
+	Console::AddCommand("run", Run);
+	Console::AddCommand("spawn", Spawn);
+
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
 	return 0;
@@ -140,6 +197,16 @@ void Core::HandleUpdates() {
 	}
 
 	float _localDelta = (float)this->_timeElapsed; // Set local delta to current time elapsed
+
+	//Check threads
+	for (size_t t = 0; t < this->threads.size(); t++) {
+		if (threads[t]->isDone) { // If thread is done running
+			threads[t]->thread.join(); // Join
+			
+			delete threads[t];
+			threads.erase(threads.begin() + t);
+		}
+	}
 
 	//Update Game
 	if (SceneManager::GetActiveScene()) {
@@ -291,4 +358,8 @@ glm::mat4 Core::GetRendererProjectionMatrix() {
 
 void Core::SetRendererDrawFrameBufferToScreen(bool state) {
 	Core::GetInstance()->renderer->DrawFrameBufferToScreenObject(state);
+}
+
+void Core::RegisterThread(Thread* thread) {
+	Core::GetInstance()->threads.push_back(thread);
 }
