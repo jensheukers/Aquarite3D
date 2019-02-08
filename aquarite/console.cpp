@@ -89,6 +89,8 @@ void Console::Initialize() {
 }
 
 void Console::Update() {
+	
+
 	if (Input::GetKeyUp(KEYCODE_GRAVE_ACCENT)) {
 		if (!Console::GetInstance()->showConsole) {
 			Console::GetInstance()->showConsole = true;

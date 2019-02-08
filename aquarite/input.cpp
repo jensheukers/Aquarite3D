@@ -83,7 +83,9 @@ bool Input::GetKeyUp(int keyCode) {
 
 void Input::SetKey(int keyCode, bool state) {
 	Input::GetInstance()->_keys[keyCode] = state;
-	Input::GetInstance()->lastKey = keyCode;
+	if (state == true) {
+		Input::GetInstance()->lastKey = keyCode;
+	}
 }
 
 bool Input::GetButtonDown(int buttonCode) {

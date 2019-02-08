@@ -173,36 +173,21 @@ void UIInputField::Update() {
 		if (Input::GetLastKey() == KEYCODE_EMPTY_KEY) return;
 
 		//We translate the key press to character
-		if (lastTypeTime + 150 < Core::GetTimeElapsed()) {
-			if (Input::GetLastKey() != KEYCODE_BACKSPACE) {
+		if (Input::GetLastKey() != KEYCODE_BACKSPACE) {
 
-				//Check for key combo's
-				if (Input::GetKey(KEYCODE_RIGHT_SHIFT) || Input::GetKey(KEYCODE_LEFT_SHIFT)) {
-					if (Input::GetKeyDown(KEYCODE_9)) {
-						text->GetText().push_back('(');
-					}
-					else if (Input::GetKeyDown(KEYCODE_0)) {
-						text->GetText().push_back(')');
-					}
-					else if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
-						text->GetText().push_back('"');
-					}
-					else if (Input::GetKeyDown(KEYCODE_EQUAL)) {
-						text->GetText().push_back('+');
-					}
-					else {
-						bool falseKeyFound = false;
-
-						for (int i = 0; i < NON_ALLOWED_INPUTFIELD_CHARS_SIZE; i++) {
-							if (nonAllowedInputFieldChars[i] == Input::GetLastKey()) {
-								falseKeyFound = true;
-							}
-						}
-
-						if (!falseKeyFound) {
-							text->GetText().push_back((char)Input::GetLastKey());
-						}
-					}
+			//Check for key combo's
+			if (Input::GetKey(KEYCODE_RIGHT_SHIFT) || Input::GetKey(KEYCODE_LEFT_SHIFT)) {
+				if (Input::GetKeyDown(KEYCODE_9)) {
+					text->GetText().push_back('(');
+				}
+				else if (Input::GetKeyDown(KEYCODE_0)) {
+					text->GetText().push_back(')');
+				}
+				else if (Input::GetKeyDown(KEYCODE_APOSTROPHE)) {
+					text->GetText().push_back('"');
+				}
+				else if (Input::GetKeyDown(KEYCODE_EQUAL)) {
+					text->GetText().push_back('+');
 				}
 				else {
 					bool falseKeyFound = false;
@@ -214,17 +199,31 @@ void UIInputField::Update() {
 					}
 
 					if (!falseKeyFound) {
-						text->GetText().push_back(tolower((char)Input::GetLastKey()));
+						text->GetText().push_back((char)Input::GetLastKey());
 					}
 				}
 			}
 			else {
-				if (text->GetText().length() > 0) {
-					text->GetText().erase(text->GetText().begin() + text->GetText().length() - 1);
+				bool falseKeyFound = false;
+
+				for (int i = 0; i < NON_ALLOWED_INPUTFIELD_CHARS_SIZE; i++) {
+					if (nonAllowedInputFieldChars[i] == Input::GetLastKey()) {
+						falseKeyFound = true;
+					}
+				}
+
+				if (!falseKeyFound) {
+					text->GetText().push_back(tolower((char)Input::GetLastKey()));
 				}
 			}
-			lastTypeTime = Core::GetTimeElapsed();
 		}
+		else {
+			if (text->GetText().length() > 0) {
+				text->GetText().erase(text->GetText().begin() + text->GetText().length() - 1);
+			}
+		}
+		lastTypeTime = Core::GetTimeElapsed();
+		
 	}
 }
 
