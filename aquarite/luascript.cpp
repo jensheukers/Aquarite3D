@@ -18,6 +18,7 @@ LuaScript* LuaScript::GetInstance() {
 
 LuaScript::LuaScript() {
 	this->state = luaL_newstate(); // Create a new lua state
+	luaopen_base(this->state); // Open base functions
 }
 
 int LuaScript::Run(std::string script) {
@@ -40,9 +41,14 @@ std::string LuaScript::RunFunction(std::string file, std::string function, std::
 		}
 		size_t num_args = arguments.size();
 		lua_pcall(LuaScript::GetInstance()->state, num_args, 1, 0); // We expect 1 return
-		std::string luaReturn = "Lua: ";
-		luaReturn.append(lua_tostring(LuaScript::GetInstance()->state, -1)); // Get return value from lua
-		return luaReturn;
+		if (lua_tostring(LuaScript::GetInstance()->state, -1)) {
+			std::string luaReturn = "Lua: ";
+			luaReturn.append(lua_tostring(LuaScript::GetInstance()->state, -1)); // Get return value from lua
+			return luaReturn;
+		}
+		else {
+			return "LUASCRIPT::EMPTY::RETURN::VALUE";
+		}
 	}
 	else {
 		return "Lua: " + function + " Is not a function";

@@ -94,116 +94,84 @@ int Lua_GetTimeElapsed(lua_State* state) {
 	return 1;
 }
 
-
-//Spawns a entity in the scene, searches model in resourcemanager.
-int Lua_SpawnEntity(lua_State* state) {
-	std::string modelName = lua_tostring(state, -4);
-	Vec3 position = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
-
+// Creates a new entity, and adds to scene. Returns a pointer to the object to lua
+int Lua_CreateEntity(lua_State* state) {
 	if (SceneManager::GetActiveScene()) {
 		Entity* entity = new Entity();
-		entity->SetModel(ResourceManager::GetModel(modelName));
-		entity->position = position;
+		entity->SetModel(ResourceManager::GetModel(lua_tostring(state, -4)));
+		entity->position = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
+
 		SceneManager::GetActiveScene()->AddChild(entity);
+
+		//Push to lua stack and return
+		lua_pushlightuserdata(state, (void*) entity);
+
+		return 1;
+	}
+
+	//If we could not create entity we return nothing
+	return 0;
+}
+
+//Returns a entity from scene entity children where index matches, Note that we cannot find children using this method
+int lua_GetEntityFromScene(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		lua_pushlightuserdata(state, SceneManager::GetActiveScene()->GetChild((int)lua_tonumber(state, -1)));
+		return 1;
+	}
+	return 0;
+}
+
+//Set position of entity referenced by pointer
+int lua_SetEntityPosition(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		Entity* entity = (Entity*) lua_touserdata(state, -4);
+		entity->position = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
 	}
 
 	return 0;
 }
 
-//Sets the current active camera position from lua, if there is a active scene and a camera
-int Lua_SetCameraPos(lua_State* state) {
-	float x = (float)lua_tonumber(state, -3);
-	float y = (float)lua_tonumber(state, -2);
-	float z = (float)lua_tonumber(state, -1);
-
+//Returns the position of entity referenced by pointer
+int lua_GetEntityPosition(lua_State* state) {
 	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			SceneManager::GetActiveScene()->GetActiveCamera()->SetPos(glm::vec3(x,y,z)); // Set position
-		}
+		Entity* entity = (Entity*)lua_touserdata(state, -4);
+		lua_pushnumber(state, entity->position.x);
+		lua_pushnumber(state, entity->position.y);
+		lua_pushnumber(state, entity->position.z);
+		return 3; // We pushed 3 values onto the stack
 	}
 
-	return 0;
+	return 0; // If nothing found return 0
 }
 
-//Returns the camera position to lua
-int Lua__GetCameraPos(lua_State* state) {
+//Returns the global position of entity referenced by pointer
+int lua_GetEntityPositionGlobal(lua_State* state) {
 	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			Vec3 camPos = Vec3::ToVec3(SceneManager::GetActiveScene()->GetActiveCamera()->GetPos());
-			lua_pushnumber(state, camPos.x);
-			lua_pushnumber(state, camPos.y);
-			lua_pushnumber(state, camPos.z);
-			return 3; // We pushed 3 values on the stack
-		}
-	}
-	return 0; // We can return
-}
-
-//Set the target position
-int Lua_SetCameraTargetPos(lua_State* state) {
-	float x = (float)lua_tonumber(state, -3);
-	float y = (float)lua_tonumber(state, -2);
-	float z = (float)lua_tonumber(state, -1);
-
-	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			SceneManager::GetActiveScene()->GetActiveCamera()->SetTarget(glm::vec3(x, y, z)); // Set position
-		}
+		Entity* entity = (Entity*)lua_touserdata(state, -4);
+		lua_pushnumber(state, entity->GetPositionGlobal().x);
+		lua_pushnumber(state, entity->GetPositionGlobal().y);
+		lua_pushnumber(state, entity->GetPositionGlobal().z);
+		return 3; // We pushed 3 values onto the stack
 	}
 
-	return 0;
-}
-
-//Sets the current active camera target position from lua, if there is a active scene and a camera
-int Lua_SetCameraPitch(lua_State* state) {
-	float pitch = (float)lua_tonumber(state, -1);
-
-	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			SceneManager::GetActiveScene()->GetActiveCamera()->SetPitch(pitch); // Set position
-		}
-	}
-
-	return 0;
-}
-
-//Sets the current active camera target position from lua, if there is a active scene and a camera
-int Lua_SetCameraYaw(lua_State* state) {
-	float yaw = (float)lua_tonumber(state, -1);
-
-	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			SceneManager::GetActiveScene()->GetActiveCamera()->SetYaw(yaw); // Set position
-		}
-	}
-
-	return 0;
-}
-
-//Sets the lookAtTarget boolean of the camera
-int Lua_SetCameraLookAtTarget(lua_State* state) {
-	if (SceneManager::GetActiveScene()) {
-		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
-			SceneManager::GetActiveScene()->GetActiveCamera()->lookAtTarget = lua_toboolean(state, -1); // set bool
-		}
-	}
-
-	return 0;
+	return 0; // If nothing found return 0
 }
 
 void AddNativeFunctionsToLuaStack() {
+	//Default methods
 	LuaScript::AddNativeFunction("Spawn", Spawn);
 	LuaScript::AddNativeFunction("Run", Run);
 	LuaScript::AddNativeFunction("ConsoleLog", Lua_ConsoleLog);
 	LuaScript::AddNativeFunction("GetDeltaTime", Lua_GetDeltaTime);
 	LuaScript::AddNativeFunction("GetTimeElapsed", Lua_GetTimeElapsed);
-	LuaScript::AddNativeFunction("SpawnEntity", Lua_SpawnEntity);
-	LuaScript::AddNativeFunction("SetCameraPos", Lua_SetCameraPos);
-	LuaScript::AddNativeFunction("GetCameraPos", Lua__GetCameraPos);
-	LuaScript::AddNativeFunction("SetCameraTargetPos", Lua_SetCameraTargetPos);
-	LuaScript::AddNativeFunction("SetCameraPitch", Lua_SetCameraPitch);
-	LuaScript::AddNativeFunction("SetCameraYaw", Lua_SetCameraYaw);
-	LuaScript::AddNativeFunction("CameraLookAtTarget", Lua_SetCameraLookAtTarget);
+
+	//Entity methods
+	LuaScript::AddNativeFunction("CreateEntity", Lua_CreateEntity);
+	LuaScript::AddNativeFunction("GetEntityFromScene", Lua_CreateEntity);
+	LuaScript::AddNativeFunction("SetEntityPosition", lua_SetEntityPosition);
+	LuaScript::AddNativeFunction("GetEntityPosition", lua_GetEntityPosition);
+	LuaScript::AddNativeFunction("GetEntityPositionGlobal", lua_GetEntityPositionGlobal);
 }
 
 /**

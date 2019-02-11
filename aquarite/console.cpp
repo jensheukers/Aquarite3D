@@ -181,5 +181,6 @@ void Console::AddCommand(std::string name, std::string(*callback_func)(std::stri
 }
 
 void Console::Log(std::string value) {
+	if (value == "LUASCRIPT::EMPTY::RETURN::VALUE") return; // we dont want to log empty return values
 	Console::GetInstance()->logTextLines.push_back(value + "\n"); // add a line to list
 }
