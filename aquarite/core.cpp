@@ -158,6 +158,32 @@ int lua_GetEntityPositionGlobal(lua_State* state) {
 	return 0; // If nothing found return 0
 }
 
+// Sets the camera position
+int Lua_SetCameraPosition(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			Vec3 pos = Vec3((float)lua_tonumber(state, -3), (float)lua_tonumber(state, -2), (float)lua_tonumber(state, -1));
+			SceneManager::GetActiveScene()->GetActiveCamera()->SetPos(pos.ToGLM());
+		}
+	}
+
+	return 0;
+}
+
+// Returns the camera position to lua stack
+int Lua_GetCameraPosition(lua_State* state) {
+	if (SceneManager::GetActiveScene()) {
+		if (SceneManager::GetActiveScene()->GetActiveCamera()) {
+			lua_pushnumber(state, SceneManager::GetActiveScene()->GetActiveCamera()->GetPos().x);
+			lua_pushnumber(state, SceneManager::GetActiveScene()->GetActiveCamera()->GetPos().y);
+			lua_pushnumber(state, SceneManager::GetActiveScene()->GetActiveCamera()->GetPos().z);
+			return 3; // We pushed 3 numbers onto the stack
+		}
+	}
+
+	return 0; // Return 0 if failed
+}
+
 void AddNativeFunctionsToLuaStack() {
 	//Default methods
 	LuaScript::AddNativeFunction("Spawn", Spawn);
@@ -172,6 +198,10 @@ void AddNativeFunctionsToLuaStack() {
 	LuaScript::AddNativeFunction("SetEntityPosition", lua_SetEntityPosition);
 	LuaScript::AddNativeFunction("GetEntityPosition", lua_GetEntityPosition);
 	LuaScript::AddNativeFunction("GetEntityPositionGlobal", lua_GetEntityPositionGlobal);
+
+	//Camera methods
+	LuaScript::AddNativeFunction("SetCameraPosition", Lua_SetCameraPosition);
+	LuaScript::AddNativeFunction("GetCameraPosition", Lua_GetCameraPosition);
 }
 
 /**
