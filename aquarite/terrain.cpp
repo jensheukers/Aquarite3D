@@ -16,7 +16,7 @@ void Terrain::Construct(Texture* heightMap, Point2f dimensions, int width, int h
 	std::vector<glm::vec3> verts;
 
 	if (heightMap)
-		dimensions = Point2f(heightMap->textureData->width, heightMap->textureData->height);
+		dimensions = Point2f((float)heightMap->textureData->width, (float)heightMap->textureData->height);
 
 	for (int x = 0; x < dimensions.x; x++) for (int z = 0; z < dimensions.y; z++) {
 		//Normalize the vertex position to model view
@@ -31,7 +31,7 @@ void Terrain::Construct(Texture* heightMap, Point2f dimensions, int width, int h
 		pos.z -= height / 2;
 
 		if (heightMap) {
-			float color = heightMap->GetPixelData(x, z, 0); // Get pixel color
+			int color = heightMap->GetPixelData(x, z, 0); // Get pixel color
 			pos.y += color / 255; // Get the normalized color, then add that to height
 		}
 
@@ -46,8 +46,8 @@ void Terrain::Construct(Texture* heightMap, Point2f dimensions, int width, int h
 		//Get all vertices positions
 		glm::vec3 lUp = verts[i];
 		glm::vec3 lDown = verts[i + 1];
-		glm::vec3 rUp = verts[i + dimensions.y];
-		glm::vec3 rDown = verts[(i + dimensions.y) + 1];
+		glm::vec3 rUp = verts[i + (unsigned)dimensions.y];
+		glm::vec3 rDown = verts[(i + (unsigned)dimensions.y) + 1];
 
 		//Now we got all vertices positions, we can construct 2 triangles to make a quad
 		//Our normals always face up
@@ -122,7 +122,7 @@ void Terrain::Construct(Texture* heightMap, Point2f dimensions, int width, int h
 
 	//Set propeties
 	this->model->AddMesh(mesh);
-	this->model->AddMaterial(ResourceManager::GetMaterial("defaultMaterialTex"));
+	this->model->AddMaterial(ResourceManager::GetMaterial("defaultMaterial"));
 }
 
 Terrain::~Terrain() {
