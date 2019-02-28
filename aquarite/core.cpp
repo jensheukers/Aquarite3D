@@ -3,9 +3,9 @@
 *
 *	Description: Source file for Core class.
 *
-*	Version: 7/2/2019
+*	Version: 28/2/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
 #include <Windows.h>
 #include <chrono>
@@ -18,6 +18,7 @@
 #include "debug.h"
 #include "console.h"
 #include "luascript.h"
+#include "editor.h"
 
 //Native functions for console and lua, these include Run and Spawn, Running a method means running it on this thread,
 // We only continue computing if return value is evaluated. If a lua script is spawned, it will be executed on a different
@@ -61,6 +62,15 @@ std::string Spawn(std::string value) {
 
 std::string DThread(std::string value) {
 	return Core::DestroyThread(std::stoi(value));
+}
+
+std::string EnableEditor(std::string value) {
+	if (value == "0")
+		Editor::SetActive(false);
+	else if (value == "1")
+		Editor::SetActive(true);
+
+	return "";
 }
 
 //Native functions for lua, added by default
@@ -184,6 +194,12 @@ int Lua_GetCameraPosition(lua_State* state) {
 	return 0; // Return 0 if failed
 }
 
+//Creates the editor from a lua call
+int Lua_EnableEditor(lua_State* state) {
+	Editor::SetActive(lua_toboolean(state, -1));
+	return 0; // Return nothing
+}
+
 void AddNativeFunctionsToLuaStack() {
 	//Default methods
 	LuaScript::AddNativeFunction("Spawn", Spawn);
@@ -191,6 +207,9 @@ void AddNativeFunctionsToLuaStack() {
 	LuaScript::AddNativeFunction("ConsoleLog", Lua_ConsoleLog);
 	LuaScript::AddNativeFunction("GetDeltaTime", Lua_GetDeltaTime);
 	LuaScript::AddNativeFunction("GetTimeElapsed", Lua_GetTimeElapsed);
+
+	//Editor
+	LuaScript::AddNativeFunction("EnableEditor", Lua_EnableEditor);
 
 	//Entity methods
 	LuaScript::AddNativeFunction("CreateEntity", Lua_CreateEntity);
@@ -293,6 +312,7 @@ int Core::Initialize(char* argv[], Point2i resolution) {
 	Console::AddCommand("run", Run);
 	Console::AddCommand("spawn", Spawn);
 	Console::AddCommand("destroy", DThread);
+	Console::AddCommand("editor", EnableEditor);
 
 	this->_active = true; // set active to true
 	Debug::Log("Initialized", typeid(*this).name());
@@ -352,9 +372,19 @@ void Core::HandleUpdates() {
 				SceneManager::GetActiveScene()->RenderSceneChildren(renderer, SceneManager::GetActiveScene()->GetActiveCamera()); // Normal draw
 			}
 
-			//Console is temporary always enabled
-			Console::Update();
-			Console::Render(renderer);
+			if (Editor::Active()) {
+				Editor::Update();
+			}
+			else {
+				//Check if we are not using editor's camera, if we do set it back to the camera that the editor has remembered
+				if (SceneManager::GetActiveScene()->GetActiveCamera() == Editor::GetCamera()) {
+					SceneManager::GetActiveScene()->SetActiveCamera(Editor::GetActiveCamera());
+				}
+
+				//Console is temporary always enabled
+				Console::Update();
+				Console::Render(renderer);
+			}
 
 			Debug::NewFrame();
 			renderer->Render(SceneManager::GetActiveScene()->GetActiveCamera());

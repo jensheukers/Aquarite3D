@@ -3,9 +3,9 @@
 *
 *	Description: Source file for ResourceManager singleton class.
 *
-*	Version: 15/1/2019
+*	Version: 2/28/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
 #include <iostream>
 #include <fstream>
@@ -57,6 +57,14 @@ void ResourceManager::RemoveTexture(std::string key) {
 	std::string _convertedString = "Removed Texture resource: ";
 	_convertedString.append(key);
 	Debug::Log(_convertedString, typeid(*ResourceManager::GetInstance()).name());
+}
+
+std::string ResourceManager::GetTextureKeyName(Texture* texture) {
+	for (std::map<std::string, Texture*>::reverse_iterator it = ResourceManager::GetInstance()->_textures.rbegin(); it != ResourceManager::GetInstance()->_textures.rend(); ++it) {
+		if (it->second == texture) {
+			return it->first;
+		}
+	}
 }
 
 void ResourceManager::AddMesh(std::string key, Mesh* mesh) {

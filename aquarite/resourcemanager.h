@@ -3,9 +3,9 @@
 *
 *	Description: Header file for ResourceManager singleton class.
 *
-*	Version: 9/1/2019
+*	Version: 2/28/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
@@ -54,6 +54,11 @@ public:
 	* Deletes a texture from the textures map
 	*/
 	static void RemoveTexture(std::string key);
+
+	/**
+	* Returns a texture key name
+	*/
+	static std::string GetTextureKeyName(Texture* texture);
 
 	/**
 	* Adds a new mesh to the meshes map
