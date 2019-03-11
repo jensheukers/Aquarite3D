@@ -25,6 +25,7 @@ private:
 	bool entityListActive; /**< If true entity list menu will be rendered*/
 	bool entityInfoActive; /**< If true entity info menu will be rendered*/
 	bool scriptConsoleActive; /**< If true script menu will be rendered*/
+	bool nativeFunctionListActive; /**< If true native function list menu will be rendered*/
 
 	/**
 	* Returns the instance of the editor, or creates a new instance if it does not exist
@@ -56,6 +57,11 @@ private:
 	* Handles the script menu, should be called by update every frame, whenever active
 	*/
 	void HandleScriptMenu();
+
+	/**
+	* Handles the native function list menu, should be called by update every frame, whenever active 
+	*/
+	void HandleNativeFunctionListMenu();
 
 	/**
 	* Adds a point light to the scene

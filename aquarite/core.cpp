@@ -204,22 +204,22 @@ void AddNativeFunctionsToLuaStack() {
 	//Default methods
 	LuaScript::AddNativeFunction("Spawn", Spawn);
 	LuaScript::AddNativeFunction("Run", Run);
-	LuaScript::AddNativeFunction("ConsoleLog", Lua_ConsoleLog);
+	LuaScript::AddNativeFunction("ConsoleLog", Lua_ConsoleLog, "string");
 	LuaScript::AddNativeFunction("GetDeltaTime", Lua_GetDeltaTime);
 	LuaScript::AddNativeFunction("GetTimeElapsed", Lua_GetTimeElapsed);
 
 	//Editor
-	LuaScript::AddNativeFunction("EnableEditor", Lua_EnableEditor);
+	LuaScript::AddNativeFunction("EnableEditor", Lua_EnableEditor, "bool");
 
 	//Entity methods
-	LuaScript::AddNativeFunction("CreateEntity", Lua_CreateEntity);
-	LuaScript::AddNativeFunction("GetEntityFromScene", Lua_CreateEntity);
-	LuaScript::AddNativeFunction("SetEntityPosition", lua_SetEntityPosition);
+	LuaScript::AddNativeFunction("CreateEntity", Lua_CreateEntity, "modelName, x, y, z");
+	LuaScript::AddNativeFunction("GetEntityFromScene", lua_GetEntityFromScene, "int");
+	LuaScript::AddNativeFunction("SetEntityPosition", lua_SetEntityPosition, "entity, x, y, z");
 	LuaScript::AddNativeFunction("GetEntityPosition", lua_GetEntityPosition);
 	LuaScript::AddNativeFunction("GetEntityPositionGlobal", lua_GetEntityPositionGlobal);
 
 	//Camera methods
-	LuaScript::AddNativeFunction("SetCameraPosition", Lua_SetCameraPosition);
+	LuaScript::AddNativeFunction("SetCameraPosition", Lua_SetCameraPosition, "x, y, z");
 	LuaScript::AddNativeFunction("GetCameraPosition", Lua_GetCameraPosition);
 }
 

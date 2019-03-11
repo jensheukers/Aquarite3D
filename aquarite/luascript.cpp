@@ -78,9 +78,10 @@ std::string LuaScript::RunFunction(std::string function, std::vector<std::string
 	}
 }
 
-void LuaScript::AddNativeFunction(std::string name, int(*func_pointer)(lua_State*)) {
+void LuaScript::AddNativeFunction(std::string name, int(*func_pointer)(lua_State*), std::string descParam) {
 	lua_pushcfunction(LuaScript::GetInstance()->state, func_pointer);
 	lua_setglobal(LuaScript::GetInstance()->state, name.c_str());
+	LuaScript::GetInstance()->nativeFunctionNames.push_back(name + "(" + descParam + ")");
 }
 
 int LuaScript::GetType(std::string variableName) {
@@ -121,6 +122,10 @@ std::string LuaScript::GetString(std::string variableName) {
 		Debug::LogScreen("Lua: Variable is not a string!");
 		return 0;
 	}
+}
+
+std::vector<std::string> LuaScript::GetNativeFunctionNames() {
+	return LuaScript::GetInstance()->nativeFunctionNames;
 }
 
 LuaScript::~LuaScript() {

@@ -15,6 +15,7 @@
 class LuaScript {
 private:
 	static LuaScript* instance; /**< The singleton instance. */
+	std::vector<std::string> nativeFunctionNames; /**< List containing names of native functions */
 	lua_State* state; /**< The global lua state. */
 
 	/**
@@ -55,7 +56,7 @@ public:
 	* @param name, The name of the function
 	* @param function, The pointer to the function, Function should return string to lua, and have the state as parameter
 	*/
-	static void AddNativeFunction(std::string name, int(*func_pointer)(lua_State*));
+	static void AddNativeFunction(std::string name, int(*func_pointer)(lua_State*), std::string descParam = "");
 
 	/**
 	* Determines type of variable then returns type as a int
@@ -77,6 +78,12 @@ public:
 	* @return std::string, The value returned by lua.
 	*/
 	static std::string GetString(std::string variableName);
+
+	/**
+	* Returns the list of native functions
+	* @return std::vector<std::string>, Names of the native functions registered to LUA
+	*/
+	static std::vector<std::string> GetNativeFunctionNames();
 
 	/**
 	* Destructor

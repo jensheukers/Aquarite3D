@@ -258,6 +258,16 @@ void Editor::HandleScriptMenu() {
 	ImGui::End();
 }
 
+void Editor::HandleNativeFunctionListMenu() {
+	ImGui::Begin("Lua Native Functions", &this->nativeFunctionListActive);
+
+	for (size_t i = 0; i < LuaScript::GetNativeFunctionNames().size(); i++) {
+		ImGui::Text(LuaScript::GetNativeFunctionNames()[i].c_str());
+	}
+
+	ImGui::End();
+}
+
 void Editor::AddPointLight() {
 	Light* light = new Light();
 	light->SetLightType(LightType::PointLight);
@@ -417,6 +427,7 @@ void Editor::Update() {
 
 		if (ImGui::BeginMenu("Debug")) {
 			if (ImGui::MenuItem("Script Console")) { instance->scriptConsoleActive = true; }
+			if (ImGui::MenuItem("Native Method List")) { instance->nativeFunctionListActive = true; }
 			ImGui::EndMenu();
 		}
 
@@ -434,6 +445,8 @@ void Editor::Update() {
 		instance->HandleEntityListMenu();
 	if (instance->scriptConsoleActive)
 		instance->HandleScriptMenu();
+	if (instance->nativeFunctionListActive)
+		instance->HandleNativeFunctionListMenu();
 
 	ImGui::End();
 }
