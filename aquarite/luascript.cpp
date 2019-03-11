@@ -55,6 +55,29 @@ std::string LuaScript::RunFunction(std::string file, std::string function, std::
 	}
 }
 
+std::string LuaScript::RunFunction(std::string function, std::vector<std::string> arguments) {
+	lua_getglobal(LuaScript::GetInstance()->state, function.c_str());
+
+	if (lua_isfunction(LuaScript::GetInstance()->state, -1)) {
+		for (size_t i = 0; i < arguments.size(); i++) {
+			lua_pushstring(LuaScript::GetInstance()->state, arguments[i].c_str());
+		}
+		size_t num_args = arguments.size();
+		lua_pcall(LuaScript::GetInstance()->state, num_args, 1, 0); // We expect 1 return
+		if (lua_tostring(LuaScript::GetInstance()->state, -1)) {
+			std::string luaReturn = "Lua: ";
+			luaReturn.append(lua_tostring(LuaScript::GetInstance()->state, -1)); // Get return value from lua
+			return luaReturn;
+		}
+		else {
+			return "LUASCRIPT::EMPTY::RETURN::VALUE";
+		}
+	}
+	else {
+		return "Lua: " + function + " Is not a function";
+	}
+}
+
 void LuaScript::AddNativeFunction(std::string name, int(*func_pointer)(lua_State*)) {
 	lua_pushcfunction(LuaScript::GetInstance()->state, func_pointer);
 	lua_setglobal(LuaScript::GetInstance()->state, name.c_str());

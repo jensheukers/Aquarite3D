@@ -522,3 +522,25 @@ std::string Core::DestroyThread(int index) {
 
 	return "Could not find thread";
 }
+
+void Core::AddToGlobalEntityList(Entity* entity) {
+	Core::GetInstance()->entityList.push_back(entity);
+}
+
+std::vector<Entity*> Core::GetGlobalEntityList() {
+	return Core::GetInstance()->entityList;
+}
+
+void Core::RemoveFromGlobalEntityList(Entity* entity) {
+	int index = -1;
+
+	for (size_t i = 0; i < GetGlobalEntityList().size(); i++) {
+		if (GetGlobalEntityList()[i] == entity) {
+			index = i;
+		}
+	}
+
+	if (index == -1) return;
+
+	Core::GetInstance()->entityList.erase(Core::GetInstance()->entityList.begin() + index);
+}

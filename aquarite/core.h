@@ -3,9 +3,9 @@
 *
 *	Description: Header file for Core class.
 *
-*	Version: 23/1/2019
+*	Version: 28/2/2019
 *
-*	© 2018, Jens Heukers
+*	© 2019, Jens Heukers
 */
 
 #ifndef CORE_H
@@ -55,6 +55,11 @@ private:
 
 	//List of threads, we check each frame if a thread has done its execution, so we can end it
 	std::vector<Thread*> threads; /**< List of activly running threads*/
+
+	//We want to keep a list of entities, so we can easily access all entities, whenever a child is added to whatever entity,
+	//A call should be made to this list (Only applies for Entities base, not UIElements)
+	std::vector<Entity*> entityList; /**< List of entityes*/
+
 
 public:
 	//Static methods
@@ -185,6 +190,22 @@ public:
 	* Destroys the thread where index matches, returns string with info
 	*/
 	static std::string DestroyThread(int index);
+
+	/**
+	* Adds a entity to the entity global list, Note that it is adviced to use AddChild, to allow for rendering
+	*/
+	static void AddToGlobalEntityList(Entity* entity);
+
+	/**
+	* Returns the global entity vector
+	* @return std::vector<Entity*>
+	*/
+	static std::vector<Entity*> GetGlobalEntityList();
+
+	/**
+	* Removes a entity from the global entity vector
+	*/
+	static void RemoveFromGlobalEntityList(Entity* entity);
 };
 
 #endif // !CORE_H

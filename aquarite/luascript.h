@@ -44,6 +44,13 @@ public:
 	static std::string RunFunction(std::string file , std::string function, std::vector<std::string> arguments);
 
 	/**
+	* Runs a function in lua.
+	* @param function, The function to execute
+	* @return std::string, value as a string type
+	*/
+	static std::string RunFunction(std::string function, std::vector<std::string> arguments);
+
+	/**
 	* Adds a native C Function to lua stack.
 	* @param name, The name of the function
 	* @param function, The pointer to the function, Function should return string to lua, and have the state as parameter

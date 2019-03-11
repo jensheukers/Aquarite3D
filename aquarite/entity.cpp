@@ -11,6 +11,7 @@
 #include "resourcemanager.h"
 #include "entity.h"
 #include "debug.h"
+#include "core.h"
 
 unsigned Entity::_currentId; // Declare static member
 
@@ -82,6 +83,7 @@ Entity* Entity::GetChild(int index) {
 Entity* Entity::AddChild(Entity* child) {
 	child->parent = this; // Set parent to this object
 	children.push_back(child); // Push back child
+	Core::AddToGlobalEntityList(child);
 	return child; //  Return child
 }
 
@@ -101,6 +103,7 @@ void Entity::RemoveChild(Entity* entity) {
 	}
 
 	this->children.erase(this->children.begin() + index); // Erase
+	Core::RemoveFromGlobalEntityList(entity);
 }
 
 std::vector<Entity*> Entity::GetChildren() {
